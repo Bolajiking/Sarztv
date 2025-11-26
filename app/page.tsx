@@ -146,28 +146,28 @@ export default async function Home() {
                 </div>
               ) : (
                          // Placeholder / Featured Content when NOT live
-                         <div className="relative h-full w-full bg-[#111111] flex items-center justify-center overflow-hidden group">
+                         <div className="relative h-full w-full bg-[#111111] flex items-center justify-center overflow-hidden group min-h-[300px]">
                             {/* Featured Background Image (Placeholder) */}
                             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-1000"></div>
                             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/60"></div>
                             
-                            <div className="relative z-10 text-center px-4 max-w-3xl">
-                               <span className="inline-block py-1 px-3 rounded-full bg-[#c5a059]/20 backdrop-blur-sm text-xs font-bold tracking-wider uppercase mb-4 text-[#c5a059] border border-[#c5a059]/30">
+                            <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full max-w-3xl mx-auto flex flex-col items-center justify-center">
+                               <span className="inline-block py-1.5 px-3 sm:px-4 rounded-full bg-[#c5a059]/20 backdrop-blur-sm text-xs sm:text-sm font-bold tracking-wider uppercase mb-4 sm:mb-6 text-[#c5a059] border border-[#c5a059]/30">
                                   Featured Message
                                </span>
-                               <h1 className="text-3xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl tracking-tight">
+                               <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-white mb-3 sm:mb-4 drop-shadow-2xl tracking-tight px-2">
                                   Endless Celebration
                                </h1>
-                               <p className="text-lg md:text-xl text-slate-200 mb-8 font-medium max-w-2xl mx-auto drop-shadow-md">
+                               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-200 mb-6 sm:mb-8 font-medium max-w-2xl mx-auto drop-shadow-md px-2">
                                   Leading people to a life of endless celebration in Christ. Watch our latest service now.
                                </p>
-                               <div className="flex items-center justify-center gap-4">
-                                  <button className="px-8 py-3 bg-[#c5a059] text-black font-bold rounded-md hover:bg-[#e5c07b] transition-colors flex items-center gap-2">
-                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full px-4">
+                                  <button className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-[#c5a059] text-black font-bold rounded-md hover:bg-[#e5c07b] transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                      Watch Now
                                   </button>
-                                  <button className="px-8 py-3 bg-white/5 backdrop-blur-md text-white font-bold rounded-md hover:bg-white/10 transition-colors flex items-center gap-2 border border-white/10">
-                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                  <button className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-white/5 backdrop-blur-md text-white font-bold rounded-md hover:bg-white/10 transition-colors flex items-center justify-center gap-2 border border-white/10 text-sm sm:text-base">
+                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                      Learn More
                                   </button>
                     </div>
