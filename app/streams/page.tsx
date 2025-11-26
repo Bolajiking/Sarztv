@@ -95,14 +95,30 @@ export default async function StreamsPage() {
                   Join Service →
                 </Link>
               </div>
-              <div className="rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+              
+              <div className="rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 relative group">
+                <Link href={`/streams/${activeStream.slug}`} className="block w-full aspect-video relative">
+                   {/* Preview Player (Muted, No Controls) */}
+                   <div className="absolute inset-0 pointer-events-none">
                 <VideoPlayer
                   playbackId={activeStream.playbackId ?? activeStream.livepeerStreamId}
                   title={activeStream.title}
                   type="live"
-                  showControls
+                        showControls={false}
+                        autoPlay={true}
                   initialSrc={activeStreamSrc}
                 />
+                   </div>
+
+                   {/* Hover Overlay */}
+                   <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/40 transition-all duration-300">
+                      <div className="transform scale-95 opacity-80 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300">
+                         <div className="px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-full font-bold text-lg shadow-xl flex items-center gap-3">
+                            <span className="animate-pulse">●</span> Watch Live
+                         </div>
+                      </div>
+                   </div>
+                </Link>
               </div>
             </div>
           )}

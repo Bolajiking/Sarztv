@@ -9,10 +9,16 @@ export function LiveChat() {
     { id: '3', user: 'Sarah', text: 'Hallelujah!', color: 'text-[#c5a059]' },
   ]);
   const [newMessage, setNewMessage] = useState('');
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      const { scrollHeight, clientHeight } = chatContainerRef.current;
+      chatContainerRef.current.scrollTo({
+        top: scrollHeight - clientHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   useEffect(() => {
@@ -57,7 +63,7 @@ export function LiveChat() {
   };
 
   return (
-    <div className="flex flex-col h-[600px] bg-[#111111]/50 rounded-xl border border-white/10 overflow-hidden">
+    <div className="flex flex-col h-[500px] lg:h-[600px] bg-[#111111]/50 rounded-xl border border-white/10 overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b border-white/10 bg-black/40 backdrop-blur-sm">
         <h3 className="font-bold text-white flex items-center gap-2">
           <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
@@ -66,14 +72,16 @@ export function LiveChat() {
         <span className="text-xs text-zinc-500 font-mono">1.2k online</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+      <div 
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar scroll-smooth"
+      >
         {messages.map((msg) => (
           <div key={msg.id} className="flex flex-col animate-fade-in-up">
             <span className={`text-xs font-bold ${msg.color} mb-0.5`}>{msg.user}</span>
             <p className="text-sm text-slate-300 break-words leading-relaxed">{msg.text}</p>
           </div>
         ))}
-        <div ref={chatEndRef} />
       </div>
 
       <form onSubmit={handleSendMessage} className="p-3 border-t border-white/10 bg-black/40">

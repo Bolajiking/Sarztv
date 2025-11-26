@@ -64,23 +64,23 @@ export default async function VideoPage({ params }: VideoPageProps) {
                     {/* Video Player Container */}
                     <div className="relative overflow-hidden rounded-2xl shadow-2xl shadow-black/50 ring-1 ring-white/10 bg-black aspect-video group">
                         <div className="absolute inset-0 bg-[#c5a059]/5 pointer-events-none group-hover:bg-transparent transition-colors duration-500" />
-                        {video.playbackId ? (
-                            <VideoPlayer
-                            playbackId={video.playbackId}
-                            title={video.title}
-                            poster={video.thumbnailUrl || undefined}
-                            showControls={true}
-                            initialSrc={playbackSrc}
+              {video.playbackId ? (
+                <VideoPlayer
+                  playbackId={video.playbackId}
+                  title={video.title}
+                  poster={video.thumbnailUrl || undefined}
+                  showControls={true}
+                  initialSrc={playbackSrc}
                             autoPlay={false}
-                            />
-                        ) : (
+                />
+              ) : (
                             <div className="flex h-full w-full items-center justify-center bg-[#111111]">
-                            <div className="text-center">
+                  <div className="text-center">
                                 <p className="text-slate-400">Video is processing...</p>
-                            </div>
-                            </div>
-                        )}
-                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
                     {/* Video Info */}
                     <div className="space-y-6">
@@ -97,14 +97,14 @@ export default async function VideoPage({ params }: VideoPageProps) {
                                     {video.metadata?.category && (
                                         <span className="px-3 py-1 rounded-full bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/20 text-xs font-bold uppercase tracking-wider">
                                             {video.metadata.category}
-                                        </span>
+                  </span>
                                     )}
                                     {!video.isFree && (
                                         <span className="px-3 py-1 rounded-full bg-white/10 text-white border border-white/20 text-xs font-bold uppercase tracking-wider">
                                             Premium
-                                        </span>
-                                    )}
-                                </div>
+                  </span>
+                )}
+              </div>
                             </div>
 
                             {/* Action Buttons */}
@@ -157,7 +157,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
                              <p className="text-slate-500 text-sm italic">No related videos found.</p>
                         )}
                     </div>
-                </div>
+              </div>
             </div>
           </div>
         </div>

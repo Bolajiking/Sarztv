@@ -197,12 +197,18 @@ export default function VideoPlayer({
             lowerMsg.includes('manifestloaderror') ||
             lowerMsg.includes('failed to fetch') ||
             lowerMsg.includes('error fetching') ||
-            lowerMsg.includes('error with hls');
+            lowerMsg.includes('error with hls') ||
+            lowerMsg.includes('networkerror') ||
+            lowerMsg.includes('mediaerror') ||
+            lowerMsg.includes('abort') ||
+            lowerMsg.includes('emptymanifest');
           
           // If it's a parsing error on a live stream, it likely means the stream ended
           // Also catch empty errors on live streams which are common when the stream cuts
-          if (type === 'live' && (isBenignError || isEmptyError || !errorMessage)) {
+          if (type === 'live' && (isBenignError || isEmptyError || !errorMessage || errorCode === 404)) {
              // Silently suppress - don't log anything
+             // This indicates the stream has likely stopped or is restarting
+             console.log('[Video Player] Stream interruption detected, refreshing state...');
              setError(null); 
              router.refresh();
              return;

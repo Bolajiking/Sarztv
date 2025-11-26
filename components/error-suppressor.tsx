@@ -17,16 +17,29 @@ export function ErrorSuppressor() {
 
       try {
         // First check: if all args are empty objects or strings, suppress immediately
-        const allArgsEmpty = args.every((arg) => {
-          if (typeof arg === 'string' && (arg === '{}' || arg.trim() === '')) return true;
-          if (typeof arg === 'object' && arg !== null && !Array.isArray(arg)) {
-            const json = JSON.stringify(arg);
-            if (json === '{}' || json === '[]') return true;
+        const isUseless = (arg: any) => {
+          if (arg === undefined || arg === null) return true;
+          if (typeof arg === 'string' && (arg.trim() === '' || arg === '{}')) return true;
+          if (typeof arg === 'object') {
+            if (Array.isArray(arg) && arg.length === 0) return true;
+            // Catch empty objects via keys
+            if (Object.keys(arg).length === 0) {
+              return true;
+            }
+            // Check stringify as backup
+            try {
+              const json = JSON.stringify(arg);
+              if (json === '{}' || json === '[]') return true;
+            } catch (e) {}
           }
           return false;
-        });
+        };
+
+        // If ANY arg is useless (especially empty objects), suppress the entire error
+        // This catches the common {} errors from Livepeer
+        const hasUselessArg = args.some(isUseless);
         
-        if (allArgsEmpty) {
+        if (hasUselessArg) {
           shouldSuppress = true;
         } else {
           // Check if any argument matches suppression criteria
@@ -49,11 +62,15 @@ export function ErrorSuppressor() {
               lowerArg.includes('failed to fetch') ||
               lowerArg.includes('error fetching') ||
               lowerArg.includes('error with hls') ||
+              lowerArg.includes('mediaerror') ||
+              lowerArg.includes('networkerror') ||
+              lowerArg.includes('abort') ||
               lowerArg.includes('play() failed') ||
               lowerArg.includes('notallowederror') ||
               lowerArg.includes("user didn't interact") ||
               lowerArg.includes('unique "key" prop') ||
-              lowerArg.includes('warning-keys')
+              lowerArg.includes('warning-keys') ||
+              lowerArg.includes('unique "key" prop')
             );
           }
 
@@ -72,6 +89,9 @@ export function ErrorSuppressor() {
                 msg.includes('err_timed_out') ||
                 msg.includes('err_name_not_resolved') ||
                 msg.includes('failed to fetch') ||
+                msg.includes('mediaerror') ||
+                msg.includes('networkerror') ||
+                msg.includes('abort') ||
                 msg.includes('play() failed') ||
                 msg.includes('notallowederror') ||
                 msg.includes("user didn't interact") ||
@@ -99,6 +119,9 @@ export function ErrorSuppressor() {
                     msg.includes('err_timed_out') ||
                     msg.includes('err_name_not_resolved') ||
                     msg.includes('failed to fetch') ||
+                    msg.includes('mediaerror') ||
+                    msg.includes('networkerror') ||
+                    msg.includes('abort') ||
                     msg.includes('play() failed') ||
                     msg.includes('notallowederror') ||
                     msg.includes("user didn't interact") ||

@@ -54,6 +54,24 @@ export default async function Home() {
       isFree: true,
       status: 'ready'
     },
+    {
+      id: 'worship-3',
+      title: 'Atmosphere of Miracles',
+      description: 'Live worship recording from our healing service.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1506701168088-8cb6a18729b5?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
+    {
+      id: 'worship-4',
+      title: 'CCI Worship Live: The Encounter',
+      description: 'Exclusive extended worship session.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e3728?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 4.99,
+      isFree: false,
+      status: 'ready'
+    },
   ];
 
   // Placeholder Data for "Sermon Series" (Fallback)
@@ -76,6 +94,42 @@ export default async function Home() {
       isFree: true,
       status: 'ready'
     },
+    {
+      id: 'series-3',
+      title: 'Financial Dominion',
+      description: 'Mastering biblical economics and stewardship.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
+    {
+      id: 'series-4',
+      title: 'The Holy Spirit Series',
+      description: 'Deep dive into the person and power of the Holy Spirit.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true, // Subscriber only content usually marked as free but gated, or can be price
+      status: 'ready'
+    },
+    {
+      id: 'series-5',
+      title: 'Relationship Goals',
+      description: 'Building god-fearing relationships and marriages.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1516575972642-9084b276ee66?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 9.99,
+      isFree: false,
+      status: 'ready'
+    },
+    {
+      id: 'series-6',
+      title: 'Prophetic Alignment',
+      description: 'Understanding the times and seasons.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
   ];
 
   // Placeholder Data for "Conferences & Events" (Fallback)
@@ -93,8 +147,35 @@ export default async function Home() {
       id: 'conf-2',
       title: 'Women\'s Conference',
       description: 'Empowering women to walk in their calling.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?q=80&w=1000&auto=format&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 14.99,
+      isFree: false,
+      status: 'ready'
+    },
+    {
+      id: 'conf-3',
+      title: 'NextGen Youth Camp',
+      description: 'Raising the next generation of revivalists.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
+    {
+      id: 'conf-4',
+      title: 'Worship & Arts Masterclass',
+      description: 'Technical and spiritual training for creatives.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 29.99,
+      isFree: false,
+      status: 'ready'
+    },
+    {
+      id: 'conf-5',
+      title: 'Marriage Retreat 2023',
+      description: 'Exclusive sessions from our annual retreat.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 49.99,
       isFree: false,
       status: 'ready'
     },
@@ -132,18 +213,39 @@ export default async function Home() {
                 
                 {/* Main Hero Card (Livestream/Featured) - Spans 9 columns */}
                 <div className="lg:col-span-9">
-                   <div className="relative overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10 bg-black aspect-video">
+                   <div className="relative overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10 bg-black aspect-video group cursor-pointer">
                       {latestStream && isLive ? (
-                        <div className="h-full w-full flex flex-col">
+                        <Link href={`/streams/${latestStream.slug}`} className="block h-full w-full relative">
+                          <div className="h-full w-full flex flex-col pointer-events-none">
                     <VideoPlayer
                       playbackId={latestStream.playbackId ?? latestStream.livepeerStreamId}
                       title={latestStream.title}
                       type="live"
-                      showControls={true}
+                              showControls={false}
                               autoPlay={true}
                       initialSrc={latestStreamSrc}
                     />
+                          </div>
+                          
+                          {/* Interactive Overlay */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all duration-300">
+                             <div className="transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center gap-3">
+                                <div className="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-600/30 animate-pulse">
+                                   <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                                <span className="px-4 py-2 bg-black/60 backdrop-blur-md rounded-full text-white font-bold text-sm border border-white/10">
+                                   Click to Join Live Experience
+                                </span>
+                             </div>
+                          </div>
+
+                          {/* Mobile-friendly visible overlay (always visible on small screens if needed, but hover works on touch usually as tap) */}
+                          <div className="absolute inset-0 flex items-center justify-center md:hidden">
+                             <div className="w-14 h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-lg">
+                                <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  </div>
                 </div>
+                        </Link>
               ) : (
                          // Placeholder / Featured Content when NOT live
                          <div className="relative h-full w-full bg-[#111111] flex items-center justify-center overflow-hidden group min-h-[300px]">

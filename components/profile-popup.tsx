@@ -206,7 +206,7 @@ export function ProfilePopup({ isOpen, onClose }: ProfilePopupProps) {
                 disabled={!topUpAmount || isAddingFunds}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-[#c5a059] to-[#e5c07b] font-bold text-black shadow-lg shadow-[#c5a059]/20 disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
-                {isAddingFunds ? 'Processing...' : 'Pay with Card / Apple Pay'}
+                {isAddingFunds ? 'Processing...' : 'Pay'}
               </button>
               <p className="text-center text-[10px] text-slate-500 mt-3">
                 Secured by Stripe & Circle. Funds available instantly.
