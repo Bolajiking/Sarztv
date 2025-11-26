@@ -181,9 +181,21 @@ export async function getPlaybackSrc(playbackId: string): Promise<Src[] | null> 
       return null;
     }
     
-    const src = getSrc(playbackInfo);
+    const src = getSrc(playbackInfo) || [];
     
-    if (src && src.length > 0) {
+    // Add global CDN fallback for better reliability on restrictive networks
+    // This bypasses edge-specific routing if it's blocked
+    if (playbackId) {
+      const globalCdnUrl = `https://livepeercdn.studio/hls/${playbackId}/index.m3u8`;
+      const hasGlobalCdn = src.some((s: any) => s.src === globalCdnUrl);
+      
+      if (!hasGlobalCdn) {
+        console.log('[Playback Src] Adding global CDN fallback:', globalCdnUrl);
+        src.push(buildHlsSrc(globalCdnUrl));
+      }
+    }
+    
+    if (src.length > 0) {
       console.log('[Playback Src] Successfully generated source array with', src.length, 'sources');
       return src;
     }
