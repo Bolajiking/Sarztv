@@ -10,6 +10,11 @@ export const env = {
   
   // Privy
   privyAppId: process.env.NEXT_PUBLIC_PRIVY_APP_ID || '',
+  privyLoginMethods: process.env.NEXT_PUBLIC_PRIVY_LOGIN_METHODS?.split(',').map(m => m.trim()) || ['wallet', 'email', 'sms'],
+  privyTheme: (process.env.NEXT_PUBLIC_PRIVY_THEME || 'dark') as 'light' | 'dark',
+  privyAccentColor: process.env.NEXT_PUBLIC_PRIVY_ACCENT_COLOR || '#c5a059',
+  privyLogo: process.env.NEXT_PUBLIC_PRIVY_LOGO || '/next.svg',
+  privyEmbeddedWallets: process.env.NEXT_PUBLIC_PRIVY_EMBEDDED_WALLETS === 'true',
   
   // Supabase
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
