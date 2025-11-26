@@ -57,7 +57,7 @@ export function ProfilePopup({ isOpen, onClose }: ProfilePopupProps) {
   return (
     <div 
       ref={popupRef}
-      className="absolute right-0 top-20 w-96 rounded-2xl bg-[#0a0a0a] border border-white/10 shadow-2xl shadow-black/50 overflow-hidden z-[100] animate-fade-in-up origin-top-right"
+      className="absolute right-0 top-20 w-[90vw] sm:w-96 rounded-2xl bg-[#0a0a0a] border border-white/10 shadow-2xl shadow-black/50 overflow-hidden z-[100] animate-fade-in-up origin-top-right"
     >
       {/* Header / Tabs */}
       <div className="flex border-b border-white/5 bg-[#111111]/50 backdrop-blur-sm">

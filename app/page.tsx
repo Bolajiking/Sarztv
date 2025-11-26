@@ -155,7 +155,7 @@ export default async function Home() {
                                <span className="inline-block py-1 px-3 rounded-full bg-[#c5a059]/20 backdrop-blur-sm text-xs font-bold tracking-wider uppercase mb-4 text-[#c5a059] border border-[#c5a059]/30">
                                   Featured Message
                                </span>
-                               <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl tracking-tight">
+                               <h1 className="text-3xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl tracking-tight">
                                   Endless Celebration
                                </h1>
                                <p className="text-lg md:text-xl text-slate-200 mb-8 font-medium max-w-2xl mx-auto drop-shadow-md">
@@ -194,7 +194,7 @@ export default async function Home() {
                 </div>
 
                 {/* Right Side: Schedule / Up Next - Spans 3 columns */}
-                <div className="lg:col-span-3 flex flex-col h-full">
+                <div className="lg:col-span-3 flex flex-col h-[400px] lg:h-full">
                    <div className="bg-[#111111]/80 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex-1 flex flex-col overflow-hidden shadow-xl">
                       <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
                          <h3 className="text-lg font-bold text-white flex items-center gap-2">

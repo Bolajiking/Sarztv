@@ -19,8 +19,8 @@ export default async function VideosPage() {
       <main className="flex-1 relative z-10">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h1 className="text-5xl font-black text-white flex items-center justify-center gap-4 drop-shadow-lg">
-              <span className="text-6xl">🎬</span>
+            <h1 className="text-3xl md:text-5xl font-black text-white flex items-center justify-center gap-4 drop-shadow-lg">
+              <span className="text-4xl md:text-6xl">🎬</span>
               Video Library
             </h1>
             <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto">
