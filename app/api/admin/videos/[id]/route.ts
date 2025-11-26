@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { deleteLivepeerAsset } from '@/lib/video/livepeer-utils';
 import { getSupabaseAdmin } from '@/lib/supabase/server';
 import { isAdmin } from '@/lib/auth/admin-utils';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 
 export async function DELETE(
   request: NextRequest,
@@ -48,8 +48,8 @@ export async function DELETE(
     }
 
     // Revalidate caches to remove from UI immediately
-    revalidateTag('livepeer-assets');
-    revalidateTag('livepeer-videos');
+    revalidatePath('/videos', 'page');
+    revalidatePath('/admin', 'page');
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -92,7 +92,8 @@ export async function PATCH(
       throw error;
     }
 
-    revalidateTag('livepeer-videos');
+    revalidatePath('/videos', 'page');
+    revalidatePath('/admin', 'page');
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

@@ -35,14 +35,19 @@ async function runMigration() {
       if (statement.trim()) {
         console.log(`⚙️  Executing: ${statement.substring(0, 60)}...`);
         
-        const { error } = await supabase.rpc('exec_sql', { 
-          sql: statement 
-        }).catch(async () => {
+        let result;
+        try {
+          result = await supabase.rpc('exec_sql', { 
+            sql: statement 
+          });
+        } catch (rpcError) {
           // If RPC doesn't exist, try direct query execution
           // Note: Supabase JS client doesn't support raw SQL directly
           // We'll need to use the REST API or SQL editor
           throw new Error('Direct SQL execution not available via JS client');
-        });
+        }
+
+        const { error } = result;
 
         if (error) {
           // Try alternative: Execute via REST API

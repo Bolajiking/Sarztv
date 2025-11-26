@@ -165,7 +165,6 @@ export default function VideoPlayer({
       <Root
         src={src}
         autoPlay={autoPlay}
-        muted={autoPlay} // Mute if autoplay is enabled
         volume={autoPlay ? 0 : 1} // Force mute for autoplay to work reliably
         onError={(error) => {
           // Livepeer player fires benign errors while warming up live streams

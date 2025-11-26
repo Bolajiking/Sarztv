@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteLivepeerAsset } from '@/lib/video/livepeer-utils';
 import { isAdmin } from '@/lib/auth/admin-utils';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 
 export async function DELETE(
   request: NextRequest,
@@ -40,8 +40,8 @@ export async function DELETE(
     
     // Revalidate caches to remove from UI immediately
     console.log('[Admin API] Revalidating caches...');
-    revalidateTag('livepeer-assets');
-    revalidateTag('livepeer-recorded-sessions');
+    revalidatePath('/streams', 'page');
+    revalidatePath('/admin', 'page');
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
