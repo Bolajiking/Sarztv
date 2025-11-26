@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Full Court - Basketball Content Platform",
-  description: "The ultimate basketball content platform for players, fans, and creators. Stream, watch, and engage with the game.",
+  title: "CCI TV - Ministry Streaming Platform",
+  description: "Leading people to a life of endless celebration in Christ. Join our digital sanctuary for live services, sermons, and spiritual growth.",
 };
 
 export default function RootLayout({

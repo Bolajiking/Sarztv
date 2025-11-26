@@ -112,28 +112,15 @@ export async function getPlaybackInfo(playbackId: string): Promise<any | null> {
   }
 
   try {
-    const response = await fetch(`https://livepeer.studio/api/playback/${playbackId}`, {
-      headers: {
-        Authorization: `Bearer ${serverEnv.livepeerApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('[Playback Info] Livepeer playback API error:', response.status, text);
-      return null;
-    }
-
-    const playbackInfo = await response.json();
-
-    if (!playbackInfo) {
+    const livepeer = getLivepeerClient();
+    const response = await livepeer.playback.get(playbackId);
+    
+    if (!response || !response.playbackInfo) {
       console.warn('[Playback Info] Empty playback response for', playbackId);
       return null;
     }
 
-    return playbackInfo;
+    return response.playbackInfo;
   } catch (error: any) {
     console.error('[Playback Info] Error fetching playback info:', {
       playbackId,
@@ -153,69 +140,61 @@ export async function getPlaybackUrl(playbackId: string): Promise<string | null>
     const playbackInfo = await getPlaybackInfo(playbackId);
     
     if (!playbackInfo) {
-      console.warn('[Playback URL] No playback info available');
+      console.warn('[Playback URL] No playback info available for playback ID:', playbackId);
+      // Do NOT fallback to CDN - return null to indicate failure
       return null;
     }
     
-    // Extract HLS URL from playback info
-    const sources =
-      playbackInfo.meta?.source ||
-      playbackInfo.meta?.sources ||
-      playbackInfo.source ||
-      playbackInfo.sources ||
-      [];
+    // Use getSrc to extract the best source URL
+    const src = getSrc(playbackInfo);
     
-    if (!Array.isArray(sources) || sources.length === 0) {
-      console.warn('[Playback URL] No sources found in playback info');
-      return `https://livepeercdn.studio/hls/${playbackId}/index.m3u8`;
-    }
-    
-    // Find HLS source (SDK returns 'url' not 'src')
-    const hlsSource = sources.find((s: any) => 
-      s.type === 'html5/application/vnd.apple.mpegurl' || 
-      s.type?.includes('mpegurl') ||
-      s.type?.includes('m3u8') ||
-      s.url?.includes('.m3u8')
+    // Find HLS source
+    const hlsSource = src?.find((s: any) => 
+      s.type === 'application/vnd.apple.mpegurl' || 
+      s.type === 'application/x-mpegURL'
     );
     
-    // Prefer the standard global CDN URL for HLS if we have a playbackId
-    // The API sometimes returns direct origin URLs (vod-cdn.lp-playback.studio) which can be slower or have connectivity issues
-    if (playbackId) {
-      const cdnUrl = `https://livepeercdn.studio/hls/${playbackId}/index.m3u8`;
-      console.log(`[Playback URL] Using standard CDN URL: ${cdnUrl}`);
-      return cdnUrl;
+    if (hlsSource?.src) {
+      console.log('[Playback URL] Found valid HLS source');
+      return hlsSource.src;
     }
     
-    if (hlsSource?.url) {
-      console.log(`[Playback URL] Found HLS URL from API: ${hlsSource.url.substring(0, 100)}...`);
-      return hlsSource.url;
-    }
-    
-    // Fallback: Use first source with url property
-    const firstSourceWithUrl = sources.find((s: any) => s.url);
-    if (firstSourceWithUrl?.url) {
-      console.log(`[Playback URL] Using first available source: ${firstSourceWithUrl.url.substring(0, 100)}...`);
-      return firstSourceWithUrl.url;
-    }
-    
-    console.warn('[Playback URL] No usable source found');
-    return `https://livepeercdn.studio/hls/${playbackId}/index.m3u8`;
+    // If we have playback info but no valid HLS source, the video may not be ready
+    console.warn('[Playback URL] No HLS source found in playback info for:', playbackId);
+    return null;
   } catch (error: any) {
     console.error('[Playback URL] Error fetching playback URL:', {
       playbackId,
       error: error?.message || String(error),
     });
-    // Last resort fallback to CDN pattern
-    return `https://livepeercdn.studio/hls/${playbackId}/index.m3u8`;
+    return null;
   }
 }
 
 export async function getPlaybackSrc(playbackId: string): Promise<Src[] | null> {
-  // Always prioritize the standard CDN URL for reliability
-  // The SDK's getSrc() often returns direct origin URLs which can timeout
-  const cdnUrl = `https://livepeercdn.studio/hls/${playbackId}/index.m3u8`;
-  
-  return [buildHlsSrc(cdnUrl)];
+  try {
+    console.log('[Playback Src] Fetching playback info for:', playbackId);
+    const playbackInfo = await getPlaybackInfo(playbackId);
+    
+    if (!playbackInfo) {
+      console.warn('[Playback Src] No playback info available for:', playbackId);
+      return null;
+    }
+    
+    const src = getSrc(playbackInfo);
+    
+    if (src && src.length > 0) {
+      console.log('[Playback Src] Successfully generated source array with', src.length, 'sources');
+      return src;
+    }
+    
+    // If we have info but no sources, the video is not ready or invalid
+    console.warn('[Playback Src] getSrc returned empty array for:', playbackId);
+    return null;
+  } catch (error) {
+     console.error('[Playback Src] Error:', error);
+     return null;
+  }
 }
 
 /**

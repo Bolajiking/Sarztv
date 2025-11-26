@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPlaybackUrl, getPlaybackInfoFromAsset } from '@/lib/video/livepeer-utils';
+import { getPlaybackUrl, getPlaybackInfoFromAsset, getPlaybackSrc } from '@/lib/video/livepeer-utils';
 
 /**
  * GET /api/videos/playback-url?playbackId={playbackId}
@@ -43,7 +43,8 @@ export async function GET(request: NextRequest) {
           // If we got the URL from the asset, use it
           if (urlFromAsset) {
             console.log('[Playback URL API] Got playback URL from asset:', urlFromAsset.substring(0, 100));
-            return NextResponse.json({ playbackUrl: urlFromAsset });
+            const src = await getPlaybackSrc(actualPlaybackId);
+            return NextResponse.json({ playbackUrl: urlFromAsset, src });
           }
         } else {
           console.warn('[Playback URL API] Could not extract playback ID from asset:', playbackIdOrAssetId);
@@ -56,27 +57,37 @@ export async function GET(request: NextRequest) {
       }
     }
     
-    // Try to get playback URL using the (possibly extracted) playback ID
-    console.log('[Playback URL API] Fetching playback URL for:', actualPlaybackId);
-    playbackUrl = await getPlaybackUrl(actualPlaybackId);
+    // Try to get playback sources using the (possibly extracted) playback ID
+    console.log('[Playback URL API] Fetching playback sources for:', actualPlaybackId);
+    const src = await getPlaybackSrc(actualPlaybackId);
     
-    if (!playbackUrl) {
-      console.warn('[Playback URL API] getPlaybackUrl returned null for:', actualPlaybackId);
+    // Prioritize returning the full src array (which includes WebRTC, HLS, MP4, etc.)
+    if (src && src.length > 0) {
+      console.log('[Playback URL API] Successfully fetched', src.length, 'playback sources');
+      
+      // Try to extract a playback URL from the sources for backward compatibility
+      const hlsSource = src.find((s: any) => 
+        s.type === 'application/vnd.apple.mpegurl' || 
+        s.type === 'application/x-mpegURL'
+      );
+      playbackUrl = hlsSource?.src || null;
+      
+      return NextResponse.json({ src, playbackUrl });
+    }
+    
+    // No valid sources - video not ready or invalid
+    console.error('[Playback URL API] No valid playback sources for:', actualPlaybackId);
       return NextResponse.json(
         { 
-          error: 'Could not fetch playback URL from Livepeer',
+        error: 'Video playback not available',
           playbackId: actualPlaybackId,
           originalId: playbackIdOrAssetId,
           note: isAssetId 
-            ? 'Tried to extract playback ID from asset but could not get playback URL.'
-            : 'Could not fetch playback URL for this playback ID.',
+          ? 'The video asset exists but playback sources are not available. It may still be processing.'
+          : 'No playback sources found for this playback ID. The video may still be processing.',
         },
         { status: 404 }
       );
-    }
-    
-    console.log('[Playback URL API] Successfully fetched playback URL:', playbackUrl.substring(0, 100));
-    return NextResponse.json({ playbackUrl });
   } catch (error) {
     console.error('[Playback URL API] Error:', error);
     return NextResponse.json(

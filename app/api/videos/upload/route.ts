@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     let description: string;
     let price: string;
     let isFree: boolean;
+    let category: string = 'other';
     let thumbnail: string | null = null;
     let file: File | null = null;
 
@@ -45,6 +46,7 @@ export async function POST(request: NextRequest) {
       description = body.description;
       price = body.price;
       isFree = body.isFree === true;
+      category = body.category || 'other';
       thumbnail = body.thumbnail || null; // This is base64 data URL
     } else {
       // Legacy approach: FormData (for backward compatibility)
@@ -54,6 +56,7 @@ export async function POST(request: NextRequest) {
       description = formData.get('description') as string;
       price = formData.get('price') as string;
       isFree = formData.get('isFree') === 'true';
+      category = (formData.get('category') as string) || 'other';
     }
 
     if (!title || !title.trim()) {
@@ -176,6 +179,7 @@ export async function POST(request: NextRequest) {
         livepeer_asset_id: assetId,
         price_usd: parseFloat(price) || 0,
         is_free: isFree,
+        category,
         thumbnail_url: finalThumbnail,
         status,
       })

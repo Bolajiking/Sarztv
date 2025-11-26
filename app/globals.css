@@ -1,20 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  /* Basketball-themed color palette */
-  --background: #000000;
-  --foreground: #ffffff;
-  --orange-primary: #FF6B35;
-  --orange-bright: #FF8C42;
-  --blue-electric: #00D9FF;
-  --purple-neon: #B24BF3;
-  --red-hot: #FF3366;
-  --green-court: #00FF88;
+  /* CCI TV - Ministry Color Palette */
+  /* Aligning with joincci.org aesthetic: Deep Black/Dark Gray & Gold */
+  --background: #050505; /* Almost Black */
+  --foreground: #ffffff; /* Pure White */
+  
+  /* Primary Brand Colors */
+  --color-primary: #c5a059; /* CCI Gold */
+  --color-secondary: #111111; /* Secondary Black */
+  
+  /* Accent Colors */
+  --color-accent-1: #e5c07b; /* Lighter Gold */
+  --color-accent-2: #998045; /* Darker Gold */
+  
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-error: #ef4444;
   
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #FF6B35 0%, #FF3366 100%);
-  --gradient-secondary: linear-gradient(135deg, #00D9FF 0%, #B24BF3 100%);
-  --gradient-court: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+  --gradient-primary: linear-gradient(180deg, #050505 0%, #111111 100%);
+  --gradient-brand: linear-gradient(135deg, #c5a059 0%, #e5c07b 100%);
+  --gradient-gold: linear-gradient(135deg, #c5a059 0%, #ffd700 50%, #998045 100%);
 }
 
 @theme inline {
@@ -24,23 +31,20 @@
   --font-mono: var(--font-geist-mono);
   
   /* Custom colors */
-  --color-orange-primary: #FF6B35;
-  --color-orange-bright: #FF8C42;
-  --color-blue-electric: #00D9FF;
-  --color-purple-neon: #B24BF3;
-  --color-red-hot: #FF3366;
-  --color-green-court: #00FF88;
+  --color-primary: #c5a059;
+  --color-secondary: #111111;
+  --color-accent-1: #e5c07b;
 }
 
 body {
-  background: #000000;
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Faded basketball background */
+/* Subtle texture overlay */
 body::before {
   content: '';
   position: fixed;
@@ -48,32 +52,8 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
-    linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.95)),
-    url('https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2090&auto=format&fit=crop');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  opacity: 0.4;
+  background-image: radial-gradient(circle at 50% 0%, rgba(197, 160, 89, 0.08), transparent 70%);
   z-index: -2;
-  filter: grayscale(30%) contrast(120%);
-}
-
-/* Additional subtle player overlay */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    url('https://images.unsplash.com/photo-1519861531473-92002639313f?q=80&w=2060&auto=format&fit=crop');
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
-  opacity: 0.15;
-  z-index: -1;
   pointer-events: none;
 }
 
@@ -89,16 +69,41 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #050505;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #FF6B35 0%, #FF3366 100%);
+  background: #333333;
   border-radius: 5px;
+  border: 2px solid #050505;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #FF8C42 0%, #FF3366 100%);
+  background: #c5a059;
+}
+
+/* Scrollbar Hide Utility */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Custom Thin Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 /* Glow effects */
@@ -127,21 +132,17 @@ html {
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
-.glow-orange {
-  box-shadow: 0 0 20px rgba(255, 107, 53, 0.5), 0 0 40px rgba(255, 107, 53, 0.3);
+.glow-primary {
+  box-shadow: 0 0 20px rgba(197, 160, 89, 0.3), 0 0 40px rgba(197, 160, 89, 0.1);
 }
 
-.glow-blue {
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.5), 0 0 40px rgba(0, 217, 255, 0.3);
-}
-
-.glow-purple {
-  box-shadow: 0 0 20px rgba(178, 75, 243, 0.5), 0 0 40px rgba(178, 75, 243, 0.3);
+.glow-gold {
+  box-shadow: 0 0 20px rgba(197, 160, 89, 0.4), 0 0 40px rgba(197, 160, 89, 0.2);
 }
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #FF6B35 0%, #FF3366 50%, #00D9FF 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #c5a059 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -162,20 +163,20 @@ html {
 
 .animated-border {
   position: relative;
-  background: #0a0a0a;
+  background: #050505;
   border-radius: 12px;
 }
 
 .animated-border::before {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: -1px;
   border-radius: 12px;
-  background: linear-gradient(90deg, #FF6B35, #FF3366, #00D9FF, #B24BF3, #FF6B35);
+  background: linear-gradient(90deg, #c5a059, #e5c07b, #998045, #c5a059);
   background-size: 200% 200%;
-  animation: border-spin 3s linear infinite;
+  animation: border-spin 4s linear infinite;
   z-index: -1;
-  opacity: 0.8;
+  opacity: 0.6;
 }
 
 /* Transitions */

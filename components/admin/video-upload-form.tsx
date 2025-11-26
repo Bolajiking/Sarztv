@@ -22,6 +22,7 @@ export function VideoUploadForm({ onSuccess }: VideoUploadFormProps) {
     description: '',
     price: '0',
     isFree: true,
+    category: 'worship',
   });
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -96,6 +97,7 @@ export function VideoUploadForm({ onSuccess }: VideoUploadFormProps) {
           description: formData.description,
           price: formData.price,
           isFree: formData.isFree,
+          category: formData.category,
           thumbnail: thumbnailBase64,
         }),
       });
@@ -278,6 +280,23 @@ export function VideoUploadForm({ onSuccess }: VideoUploadFormProps) {
             placeholder="Enter video title"
             required
           />
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Category
+          </label>
+          <select
+            id="category"
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            className="mt-1 block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-black shadow-sm focus:border-black focus:outline-none focus:ring-black dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:focus:border-white dark:focus:ring-white"
+          >
+            <option value="worship">Worship Experiences</option>
+            <option value="sermon">Sermon Series</option>
+            <option value="conference">Conferences & Events</option>
+            <option value="other">Other</option>
+          </select>
         </div>
 
         <div>

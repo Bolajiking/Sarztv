@@ -192,7 +192,7 @@ export function StreamCreateForm({ onSuccess }: StreamCreateFormProps) {
             
             <div>
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                RTMP URL
+                RTMP URL (Server)
               </label>
               <div className="mt-1 flex items-center gap-2">
                 <input
@@ -208,6 +208,9 @@ export function StreamCreateForm({ onSuccess }: StreamCreateFormProps) {
                   Copy
                 </button>
               </div>
+              <p className="mt-1 text-xs text-red-500 font-medium">
+                Note: If OBS fails to connect, ensure port 1935 is open on your network.
+              </p>
             </div>
 
             <div>
@@ -233,19 +236,61 @@ export function StreamCreateForm({ onSuccess }: StreamCreateFormProps) {
               </p>
             </div>
 
+            <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+              <h3 className="mb-3 text-sm font-bold text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                Recommended Encoder Settings (OBS/Wirecast)
+              </h3>
+              <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
+                Use these settings to ensure high-quality playback and avoid warnings.
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-blue-800 dark:text-blue-200 mb-3">
+                <li className="flex items-center gap-2 bg-white/50 dark:bg-black/20 p-2 rounded">
+                  <span className="font-bold min-w-[80px]">Keyframe Interval:</span> 
+                  <span>2 seconds (or GOP = 2s)</span>
+                </li>
+                <li className="flex items-center gap-2 bg-white/50 dark:bg-black/20 p-2 rounded">
+                  <span className="font-bold min-w-[80px]">Rate Control:</span> 
+                  <span>CBR (Constant Bitrate)</span>
+                </li>
+                <li className="flex items-center gap-2 bg-white/50 dark:bg-black/20 p-2 rounded">
+                  <span className="font-bold min-w-[80px]">Profile:</span> 
+                  <span>High or Main</span>
+                </li>
+                <li className="flex items-center gap-2 bg-white/50 dark:bg-black/20 p-2 rounded">
+                  <span className="font-bold min-w-[80px]">Tune:</span> 
+                  <span>Zerolatency (optional)</span>
+                </li>
+              </ul>
+              <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
+                <p className="text-xs font-semibold text-blue-900 dark:text-blue-100 mb-2">Bitrate Guidelines (Prevents Jitter):</p>
+                <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                  <li>• <strong>10+ Mbps upload:</strong> 4000-6000 Kbps @ 1080p</li>
+                  <li>• <strong>5-8 Mbps upload:</strong> 3000 Kbps @ 720p</li>
+                  <li>• <strong>3-5 Mbps upload:</strong> 2500 Kbps @ 720p</li>
+                  <li>• <strong>Rule:</strong> Bitrate = 60-70% of your upload speed</li>
+                </ul>
+                <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 italic">
+                  If you see "jitter" warnings, lower your bitrate by 500-1000 Kbps.
+                </p>
+              </div>
+            </div>
+
             <div className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
               <h3 className="mb-2 text-sm font-semibold text-black dark:text-white">
                 How to stream
               </h3>
               <ol className="list-decimal space-y-1 pl-5 text-sm text-zinc-700 dark:text-zinc-300">
                 <li>Use the <strong>Broadcast Now</strong> player above to stream directly from your browser.</li>
-                <li>OR use external software:
+                <li>OR use external software (OBS):
                   <ul className="list-disc pl-5 mt-1 text-zinc-500">
-                    <li>Open OBS / Streamlabs</li>
-                    <li>Go to Settings → Stream</li>
-                    <li>Select Service: Custom</li>
-                    <li>Paste the RTMP URL and Stream Key</li>
-                    <li>Click “Start Streaming”</li>
+                    <li>Open OBS and go to <strong>Settings → Stream</strong>.</li>
+                    <li>Paste the RTMP URL and Stream Key above.</li>
+                    <li><strong>Add Sources:</strong> Click (+) in Sources to add "Video Capture Device" (Camera) and "Audio Input Capture" (Mic).</li>
+                    <li><strong>IMPORTANT:</strong> Configure Output settings as shown in the blue box.</li>
+                    <li>Click “Start Streaming”.</li>
                   </ul>
                 </li>
               </ol>

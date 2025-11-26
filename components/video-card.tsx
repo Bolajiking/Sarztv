@@ -10,6 +10,7 @@ interface VideoCardProps {
   priceUsd?: number;
   isFree?: boolean;
   status?: string;
+  compact?: boolean;
 }
 
 export function VideoCard({
@@ -21,6 +22,7 @@ export function VideoCard({
   priceUsd = 0,
   isFree = true,
   status,
+  compact = false,
 }: VideoCardProps) {
   // Don't show videos that aren't ready
   if (status !== 'ready') {
@@ -29,18 +31,16 @@ export function VideoCard({
 
   return (
     <Link href={href ?? `/videos/${id}`} className="group block">
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-black to-[#0a0a0a] border border-white/10 shadow-2xl hover:shadow-[#FF6B35]/50 transition-all duration-700 hover:scale-110 hover:border-[#FF6B35]/70 hover:z-50 hover:-translate-y-2">
-        {/* Animated gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35]/0 via-[#FF3366]/0 to-[#00D9FF]/0 group-hover:from-[#FF6B35]/20 group-hover:via-[#FF3366]/10 group-hover:to-[#00D9FF]/20 transition-all duration-700 rounded-xl z-10 pointer-events-none"></div>
+      <div className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-[#111111] to-black border border-white/10 shadow-lg hover:shadow-[#c5a059]/20 transition-all duration-500 hover:scale-[1.03] hover:border-[#c5a059]/40 hover:z-10 ${compact ? 'flex flex-row h-24' : ''}`}>
         
-        <div className="relative aspect-video w-full bg-gradient-to-br from-[#0a0a0a] to-black overflow-hidden group-hover:aspect-[16/12] transition-all duration-700">
+        <div className={`relative ${compact ? 'w-40 h-full' : 'aspect-video w-full'} bg-[#1a1a1a] overflow-hidden flex-shrink-0`}>
           {thumbnailUrl ? (
             thumbnailUrl.startsWith('data:') ? (
               // Use regular img tag for base64 data URLs
               <img
                 src={thumbnailUrl}
                 alt={title}
-                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-115 group-hover:brightness-90"
+                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
               />
             ) : (
               // Use Next.js Image for remote URLs
@@ -48,16 +48,16 @@ export function VideoCard({
                 src={thumbnailUrl}
                 alt={title}
                 fill
-                className="object-cover transition-all duration-700 group-hover:scale-115 group-hover:brightness-90"
+                className="object-cover transition-all duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 priority={false}
               />
             )
           ) : (
-            <div className="flex h-full items-center justify-center relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35]/5 to-[#00D9FF]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="flex h-full items-center justify-center relative bg-[#1a1a1a]">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#c5a059]/10 to-[#e5c07b]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <svg
-                className="relative h-16 w-16 text-white/10 group-hover:text-white/30 transition-all duration-700 group-hover:scale-110"
+                className="relative h-16 w-16 text-white/20 group-hover:text-[#c5a059]/40 transition-all duration-500 group-hover:scale-110"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -65,78 +65,70 @@ export function VideoCard({
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  strokeWidth={1.5}
+                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
           )}
-          {/* Dark overlay that appears on hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
           
           {/* Play button overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all duration-500">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#FF6B35] to-[#FF3366] opacity-0 group-hover:opacity-100 transform scale-0 group-hover:scale-100 transition-all duration-500 flex items-center justify-center shadow-2xl shadow-[#FF6B35]/70 ring-4 ring-white/20">
-              <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all duration-500 opacity-0 group-hover:opacity-100">
+            <div className="w-16 h-16 rounded-full bg-[#c5a059]/80 backdrop-blur-md flex items-center justify-center ring-1 ring-white/20 transform scale-75 group-hover:scale-100 transition-all duration-500 shadow-xl">
+              <svg className="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z"/>
               </svg>
             </div>
           </div>
           
           {!isFree && (
-            <div className="absolute right-3 top-3 rounded-lg bg-gradient-to-r from-[#FF6B35] to-[#FF3366] px-3 py-1.5 text-xs font-black text-white shadow-lg shadow-[#FF6B35]/50 z-20 group-hover:scale-110 transition-transform duration-300">
+            <div className="absolute right-3 top-3 rounded-lg bg-[#c5a059] px-3 py-1.5 text-xs font-bold text-black shadow-lg z-20">
               ${priceUsd.toFixed(2)}
             </div>
           )}
         </div>
         
-        {/* Info panel that slides up on hover - Netflix style */}
-        <div className="p-5 relative z-20 bg-gradient-to-t from-black via-black/95 to-black/90">
-          <h3 className="line-clamp-2 text-lg font-black text-white group-hover:gradient-text transition-all duration-500 mb-2">
+        {/* Content panel */}
+        <div className={`${compact ? 'p-3 flex-1 flex flex-col justify-between' : 'p-5'} relative z-20 bg-[#111111]`}>
+          <h3 className={`${compact ? 'text-sm line-clamp-2 leading-tight' : 'text-lg line-clamp-2'} font-bold text-white group-hover:text-[#c5a059] transition-colors duration-300 mb-2`}>
             {title}
           </h3>
           
-          {/* Hidden info that appears on hover */}
-          <div className="max-h-0 opacity-0 group-hover:max-h-40 group-hover:opacity-100 overflow-hidden transition-all duration-700 space-y-3">
-            {description && (
-              <p className="text-sm text-white/70 line-clamp-3">
+          {!compact && description && (
+            <p className="text-sm text-slate-400 line-clamp-2 mb-4 group-hover:text-slate-300 transition-colors">
                 {description}
               </p>
             )}
             
-            {/* Action buttons row */}
-            <div className="flex items-center gap-3 pt-2">
-              <button className="flex-1 py-2 px-4 bg-gradient-to-r from-[#FF6B35] to-[#FF3366] rounded-lg font-bold text-white text-sm hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#FF6B35]/50 flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-                Play
-              </button>
-              <button className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors duration-300 border border-white/20">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </button>
-            </div>
-            
-            {/* Metadata */}
-            <div className="flex items-center gap-4 text-xs text-white/50">
-              <span className="flex items-center gap-1">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/>
+          {/* Footer info */}
+          <div className={`flex items-center justify-between text-xs text-slate-500 ${compact ? '' : 'border-t border-white/5 pt-3'}`}>
+            {!compact && (
+              <span className="flex items-center gap-1 uppercase tracking-wider font-semibold">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Video
               </span>
-              {isFree && (
-                <span className="px-2 py-0.5 bg-[#00FF88]/20 text-[#00FF88] rounded font-bold">
+            )}
+            {isFree ? (
+              <span className={`px-2 py-0.5 bg-[#c5a059]/10 text-[#c5a059] rounded font-bold ${compact ? 'text-[10px]' : ''}`}>
                   FREE
                 </span>
+            ) : (
+              <span className={`px-2 py-0.5 bg-white/10 text-white rounded font-bold ${compact ? 'text-[10px]' : ''}`}>
+                PREMIUM
+              </span>
               )}
-            </div>
           </div>
         </div>
       </div>
     </Link>
   );
 }
-

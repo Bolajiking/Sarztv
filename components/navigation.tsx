@@ -2,13 +2,18 @@
 
 import { useAuth } from '@/lib/auth/use-auth';
 import { useAdmin } from '@/lib/auth/use-admin';
+import { useUserProfile } from '@/lib/auth/use-user-profile';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { ProfilePopup } from './profile-popup';
 
 export function Navigation() {
   const { isReady, isAuthenticated, user, login, logout, userId } = useAuth();
   const { isAdmin, loading: adminLoading } = useAdmin();
+  const { profile, loading: profileLoading } = useUserProfile();
   const [mounted, setMounted] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
@@ -23,98 +28,107 @@ export function Navigation() {
         isAdmin,
         adminLoading,
         userEmail: user?.email?.address,
+        displayName: profile?.display_name,
       });
     }
-  }, [mounted, isReady, isAuthenticated, userId, isAdmin, adminLoading, user]);
+  }, [mounted, isReady, isAuthenticated, userId, isAdmin, adminLoading, user, profile]);
+
+  // Prioritize profile display name, then email part, then default
+  const displayName = profile?.display_name || user?.email?.address?.split('@')[0] || 'Member';
+  // Use profile avatar if available, otherwise default
+  const pfpUrl = profile?.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop';
 
   return (
-    <nav className="border-b border-[#FF6B35]/20 bg-black/95 backdrop-blur-xl sticky top-0 z-50">
+    <nav className="border-b border-white/10 bg-[#050505]/95 backdrop-blur-xl sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
             <Link 
               href="/" 
-              className="text-2xl font-black gradient-text hover:scale-105 transform transition-transform duration-300 flex items-center gap-2"
+              className="text-2xl font-black text-white hover:scale-105 transform transition-transform duration-300 flex items-center gap-2"
             >
-              <span className="text-3xl">🏀</span>
-              Full Court
+              <span className="text-3xl">✝️</span>
+              <span className="gradient-text">CCI TV</span>
             </Link>
           </div>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex md:items-center md:space-x-2">
+          <div className="hidden md:flex md:items-center md:space-x-1">
             <Link
               href="/videos"
-              className="relative px-4 py-2 text-sm font-bold text-white/80 hover:text-white transition-all duration-300 group"
+              className="relative px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-all duration-300 hover:bg-white/5 rounded-md"
             >
-              <span className="relative z-10">Videos</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-[#FF6B35] to-[#FF3366] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+              Video Library
             </Link>
             <Link
               href="/streams"
-              className="relative px-4 py-2 text-sm font-bold text-white/80 hover:text-white transition-all duration-300 group"
+              className="relative px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-all duration-300 hover:bg-white/5 rounded-md flex items-center gap-2"
             >
-              <span className="relative z-10 flex items-center gap-1">
-                <span className="w-2 h-2 bg-[#00FF88] rounded-full animate-pulse"></span>
-                Live Streams
-              </span>
-              <span className="absolute inset-0 bg-gradient-to-r from-[#00D9FF] to-[#B24BF3] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+              Live Services
             </Link>
             <Link
               href="/products"
-              className="relative px-4 py-2 text-sm font-bold text-white/80 hover:text-white transition-all duration-300 group"
+              className="relative px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-all duration-300 hover:bg-white/5 rounded-md"
             >
-              <span className="relative z-10">Shop</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-[#B24BF3] to-[#FF3366] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+              Hub
             </Link>
             {mounted && isAuthenticated && !adminLoading && (
               <>
                 {isAdmin && (
                   <Link
                     href="/admin"
-                    className="relative px-4 py-2 text-sm font-bold text-white/80 hover:text-white transition-all duration-300 group"
+                    className="relative px-4 py-2 text-sm font-semibold text-[#c5a059] hover:text-[#e5c07b] transition-all duration-300 hover:bg-[#c5a059]/10 rounded-md flex items-center gap-1.5"
                   >
-                    <span className="relative z-10">⚡ Admin</span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-[#FF8C42] to-[#FF6B35] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                    <span>⚡</span> Admin
                   </Link>
                 )}
-                <Link
-                  href="/profile"
-                  className="relative px-4 py-2 text-sm font-bold text-white/80 hover:text-white transition-all duration-300 group"
-                >
-                  <span className="relative z-10">Profile</span>
-                  <span className="absolute inset-0 bg-gradient-to-r from-[#00D9FF] to-[#00FF88] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-                </Link>
               </>
             )}
           </div>
 
           {/* Auth Section */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 relative">
             {!mounted || !isReady ? (
-              <div className="h-10 w-24 animate-pulse rounded-lg bg-gradient-to-r from-[#FF6B35]/20 to-[#FF3366]/20" />
+              <div className="h-10 w-24 animate-pulse rounded-lg bg-white/5" />
             ) : isAuthenticated ? (
-              <div className="flex items-center space-x-3">
-                <Link
-                  href="/profile"
-                  className="hidden lg:block text-sm font-medium text-white/60 hover:text-white transition-colors duration-300"
-                >
-                  {user?.email?.address || user?.wallet?.address?.slice(0, 8) + '...' || 'Profile'}
-                </Link>
+              <div className="relative">
                 <button
-                  onClick={logout}
-                  className="relative px-5 py-2.5 rounded-lg font-bold text-white bg-gradient-to-r from-[#FF3366] to-[#FF6B35] hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-[#FF6B35]/50"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all duration-200 group"
                 >
-                  <span className="relative z-10">Logout</span>
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20 relative group-hover:border-[#c5a059] transition-colors">
+                    <Image 
+                      src={pfpUrl}
+                      alt="Profile"
+                      width={32}
+                      height={32}
+                      className="object-cover"
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-white hidden sm:block max-w-[100px] truncate group-hover:text-[#c5a059] transition-colors">
+                    {profileLoading ? '...' : displayName}
+                  </span>
+                  <svg 
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''} group-hover:text-white`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
+
+                {/* Profile Popup */}
+                <ProfilePopup isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
               </div>
             ) : (
               <button
                 onClick={login}
-                className="relative px-6 py-3 rounded-lg font-black text-black bg-gradient-to-r from-[#FF8C42] to-[#FF6B35] hover:scale-105 transform transition-all duration-300 shadow-xl hover:shadow-[#FF6B35]/50 glow-orange"
+                className="relative px-6 py-3 rounded-lg font-bold text-black bg-gradient-to-r from-[#c5a059] to-[#e5c07b] hover:scale-105 transform transition-all duration-300 shadow-xl shadow-[#c5a059]/20"
               >
-                <span className="relative z-10">Connect Wallet</span>
+                Sign In
               </button>
             )}
           </div>
@@ -123,4 +137,3 @@ export function Navigation() {
     </nav>
   );
 }
-

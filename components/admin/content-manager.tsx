@@ -47,12 +47,15 @@ export function ContentManager() {
         },
       });
       
-      if (!res.ok) throw new Error('Failed to delete');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to delete');
+      }
       
       await fetchContent(); // Refresh
     } catch (error) {
       console.error('Delete failed:', error);
-      alert('Failed to delete video');
+      alert(`Failed to delete video: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setDeletingId(null);
     }
@@ -70,12 +73,16 @@ export function ContentManager() {
         },
       });
       
-      if (!res.ok) throw new Error('Failed to delete');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.error('Delete Asset Error Response:', res.status, errData);
+        throw new Error(errData.error || `Failed to delete (${res.status})`);
+      }
       
       await fetchContent(); // Refresh
     } catch (error) {
       console.error('Delete failed:', error);
-      alert('Failed to delete recording');
+      alert(`Failed to delete recording: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setDeletingId(null);
     }
@@ -287,4 +294,3 @@ export function ContentManager() {
     </div>
   );
 }
-

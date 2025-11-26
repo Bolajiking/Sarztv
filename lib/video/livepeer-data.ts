@@ -10,6 +10,7 @@ type SupabaseVideoRow = {
   description: string | null;
   livepeer_asset_id: string;
   thumbnail_url: string | null;
+  category: string | null;
   price_usd: number;
   is_free: boolean;
   status: string;
@@ -39,6 +40,7 @@ export interface LivepeerVideoRecord {
   supabaseId?: string;
   title: string;
   description?: string;
+  category?: string;
   thumbnailUrl?: string | null;
   playbackId?: string | null;
   status: 'ready' | 'processing' | 'error';
@@ -176,6 +178,7 @@ const fetchLivepeerStreamsRaw = unstable_cache(
           'Content-Type': 'application/json',
           Authorization: `Bearer ${serverEnv.livepeerApiKey}`,
         },
+        // Ensure we always fetch fresh data from Livepeer API
         cache: 'no-store',
       });
       if (!response.ok) {
@@ -197,7 +200,7 @@ const fetchLivepeerStreamsRaw = unstable_cache(
     }
   },
   ['livepeer-streams'],
-  { revalidate: 30 }
+  { revalidate: 1 } // Reduce cache time to 1 second for near real-time updates
 );
 
 export const getLivepeerVideos = unstable_cache(
@@ -248,6 +251,7 @@ export const getLivepeerVideos = unstable_cache(
         supabaseId: metadata?.id,
         title: metadata?.title ?? asset.name ?? 'Untitled Video',
         description: metadata?.description ?? asset.description ?? '',
+        category: metadata?.category ?? 'other',
         thumbnailUrl: metadata?.thumbnail_url ?? getAssetThumbnail(asset),
         playbackId,
         status: 'ready',
@@ -298,6 +302,7 @@ export async function getLivepeerVideoBySlug(slug: string): Promise<LivepeerVide
       supabaseId: metadata?.id,
       title: metadata?.title ?? asset.name ?? 'Untitled Video',
       description: metadata?.description ?? asset.description ?? '',
+      category: metadata?.category ?? 'other',
       thumbnailUrl: metadata?.thumbnail_url ?? getAssetThumbnail(asset),
       playbackId: playbackId ?? extractPlaybackId(asset),
       status: (asset?.status?.phase || asset?.status || 'processing') as 'ready' | 'processing' | 'error',
@@ -338,7 +343,7 @@ export const getLivepeerStreams = unstable_cache(
       effectiveStreams = supRows.map((row) => ({
         id: row.livepeer_stream_id,
         name: row.title,
-        isActive: row.is_live, // Trust DB state if API fails
+        isActive: false, // Default to false if API fails to avoid false positives
         playbackId: row.playback_id,
         createdAt: new Date(row.created_at).getTime() / 1000,
       }));
@@ -377,10 +382,11 @@ export const getLivepeerStreams = unstable_cache(
         stream.playback?.url ||
         null;
         
-      // Prioritize Livepeer API 'isActive' status if available, fallback to DB
-      const isActive = stream.isActive !== undefined 
-        ? Boolean(stream.isActive) 
-        : Boolean(metadata?.is_live);
+      // Prioritize Livepeer API 'isActive' status if available, STRICTLY
+      // We should NOT fallback to DB 'is_live' because it might be stale
+      // If stream.isActive is explicitly false, it's false.
+      // If stream.isActive is undefined (e.g. mock object), we assume false unless verified
+      const isActive = stream.isActive === true;
 
       return {
         slug: stream.id,
@@ -402,7 +408,7 @@ export const getLivepeerStreams = unstable_cache(
     return resolvedStreams;
   },
   ['livepeer-streams-combined'],
-  { revalidate: 5 }
+  { revalidate: 1 }
 );
 
 export const getRecordedSessions = unstable_cache(

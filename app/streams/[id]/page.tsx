@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getLivepeerStreamBySlug } from '@/lib/video/livepeer-data';
 import { getPlaybackSrc } from '@/lib/video/livepeer-utils';
+import { LiveChat } from '@/components/live-chat';
+import { DonationPanel } from '@/components/donation-panel';
 
 // Force dynamic rendering for stream data
 export const dynamic = 'force-dynamic';
@@ -23,7 +25,19 @@ export default async function StreamPage({ params }: StreamPageProps) {
   }
 
   const playbackId = stream.playbackId ?? stream.livepeerStreamId;
-  const playbackSrc = playbackId ? await getPlaybackSrc(playbackId) : null;
+  
+  // Get playback sources if stream has a playback ID
+  let playbackSrc = null;
+  if (playbackId) {
+    try {
+      playbackSrc = await getPlaybackSrc(playbackId);
+      if (!playbackSrc || playbackSrc.length === 0) {
+        console.warn('[Stream Page] No playback sources available for:', playbackId);
+      }
+    } catch (error) {
+      console.error('[Stream Page] Error fetching playback sources:', error);
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-black">
@@ -48,7 +62,7 @@ export default async function StreamPage({ params }: StreamPageProps) {
                     title={stream.title}
                     type="live"
                     showControls={true}
-                    autoPlay={stream.isActive}
+                    autoPlay={false}
                     initialSrc={playbackSrc}
                   />
                 ) : (
@@ -125,54 +139,17 @@ export default async function StreamPage({ params }: StreamPageProps) {
                       <span>Started {new Date(stream.createdAt).toLocaleDateString()}</span>
                     )}
                   </div>
+
+                  {/* Donation Panel Integrated Here */}
+                  <DonationPanel />
                 </div>
               </div>
             </div>
 
             {/* Live Chat & Interaction - Right Column (1/3 width on desktop) */}
             <div className="lg:col-span-1">
-              <div className="rounded-xl bg-gradient-to-br from-black to-[#0a0a0a] border border-white/10 shadow-2xl p-6 sticky top-4">
-                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <svg 
-                    className="w-5 h-5 text-orange-500" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" 
-                    />
-                  </svg>
-                  Live Chat
-                </h2>
-                
-                {/* Placeholder for live chat - will be implemented in next phase */}
-                <div className="flex items-center justify-center h-[400px] rounded-lg bg-zinc-900/50 border border-zinc-800">
-                  <div className="text-center px-6">
-                    <svg 
-                      className="mx-auto h-12 w-12 text-zinc-600 mb-3" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" 
-                      />
-                    </svg>
-                    <p className="text-sm font-medium text-zinc-400 mb-1">
-                      Live Chat Coming Soon
-                    </p>
-                    <p className="text-xs text-zinc-600">
-                      Connect with other viewers in real-time
-                    </p>
-                  </div>
-                </div>
+              <div className="sticky top-24">
+                <LiveChat />
               </div>
             </div>
           </div>
@@ -183,4 +160,3 @@ export default async function StreamPage({ params }: StreamPageProps) {
     </div>
   );
 }
-

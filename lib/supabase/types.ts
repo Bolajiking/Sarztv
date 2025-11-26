@@ -15,6 +15,7 @@ export type Database = {
           price_usd: number;
           is_free: boolean;
           thumbnail_url: string | null;
+          category: string;
           status: 'processing' | 'ready' | 'error';
           created_at: string;
           updated_at: string;
@@ -27,6 +28,7 @@ export type Database = {
           price_usd?: number;
           is_free?: boolean;
           thumbnail_url?: string | null;
+          category?: string;
           status?: 'processing' | 'ready' | 'error';
           created_at?: string;
           updated_at?: string;
@@ -39,6 +41,7 @@ export type Database = {
           price_usd?: number;
           is_free?: boolean;
           thumbnail_url?: string | null;
+          category?: string;
           status?: 'processing' | 'ready' | 'error';
           created_at?: string;
           updated_at?: string;

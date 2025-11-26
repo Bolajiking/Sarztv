@@ -4,7 +4,8 @@ import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { useAuth } from '@/lib/auth/use-auth';
 import { useEffect, useState } from 'react';
-import { getSupabase } from '@/lib/supabase/client';
+import { PROFILE_UPDATED_EVENT } from '@/lib/auth/use-user-profile';
+import { useRouter } from 'next/navigation';
 
 interface UserProfile {
   id: string;
@@ -24,6 +25,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -40,17 +42,17 @@ export default function ProfilePage() {
     if (!userId) return;
 
     try {
-      const supabase = getSupabase();
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('privy_user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        // PGRST116 is "not found" - that's okay, we'll create one
-        console.error('Error loading profile:', error);
+      // Use API route to fetch profile (bypasses RLS with service role key)
+      const response = await fetch(`/api/profile?user_id=${encodeURIComponent(userId)}`);
+      
+      if (!response.ok) {
+        console.error('Error loading profile:', response.status);
+        // Profile doesn't exist yet, create one
+        await createProfile();
+        return;
       }
+
+      const { profile: data } = await response.json();
 
       if (data) {
         setProfile(data);
@@ -62,6 +64,8 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error('Error loading profile:', error);
+      // Try to create profile as fallback
+      await createProfile();
     } finally {
       setLoading(false);
     }
@@ -103,6 +107,8 @@ export default function ProfilePage() {
         setProfile(newProfile);
         setDisplayName(newProfile.display_name || '');
         setEmail(newProfile.email || '');
+        // Dispatch event to update other components
+        window.dispatchEvent(new Event(PROFILE_UPDATED_EVENT));
       }
     } catch (error) {
       console.error('Error creating profile (catch):', {
@@ -116,42 +122,48 @@ export default function ProfilePage() {
   async function saveProfile() {
     if (!userId) return;
 
+    console.log('[Profile Page] Saving profile...', { userId, displayName, email });
+
     setSaving(true);
     try {
-      if (profile) {
-        // Update existing profile via API route
-        const response = await fetch('/api/profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            privy_user_id: userId,
-            email: email || null,
-            display_name: displayName || null,
-            avatar_url: profile.avatar_url,
-          }),
+      // Use API route to update profile (bypasses RLS with service role key)
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          privy_user_id: userId,
+          email: email || null,
+          display_name: displayName || null,
+          avatar_url: profile?.avatar_url || null,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error updating profile:', {
+          status: response.status,
+          error: errorData.error,
         });
+        alert(`Failed to update profile: ${errorData.error || 'Unknown error'}`);
+        return;
+      }
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Error updating profile:', {
-            status: response.status,
-            error: errorData.error,
-          });
-          alert(`Failed to update profile: ${errorData.error || 'Unknown error'}`);
-          return;
-        }
+      const { profile: updatedProfile } = await response.json();
+      
+      console.log('[Profile Page] Profile updated successfully:', updatedProfile);
 
-        const { profile: updatedProfile } = await response.json();
+      if (updatedProfile) {
+        setProfile(updatedProfile);
+        alert('Profile updated successfully!');
         
-        if (updatedProfile) {
-          setProfile(updatedProfile);
-          alert('Profile updated successfully!');
-        }
-      } else {
-        // Create new profile
-        await createProfile();
+        // Dispatch event to notify Navigation and Popup components
+        console.log('[Profile Page] Dispatching profile update event...');
+        window.dispatchEvent(new Event(PROFILE_UPDATED_EVENT));
+        
+        // Refresh router to ensure server components (if any) are updated
+        router.refresh();
       }
     } catch (error) {
       console.error('Error saving profile:', {
@@ -326,4 +338,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-

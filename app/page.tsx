@@ -5,6 +5,8 @@ import { VideoCard } from '@/components/video-card';
 import Link from 'next/link';
 import { getLivepeerVideos, getLivepeerStreams } from '@/lib/video/livepeer-data';
 import { getPlaybackSrc } from '@/lib/video/livepeer-utils';
+import { LiveStatusPoller } from '@/components/live-status-poller';
+import { VideoCarousel } from '@/components/video-carousel';
 
 // Force dynamic rendering for live stream data
 export const dynamic = 'force-dynamic';
@@ -12,7 +14,7 @@ export const revalidate = 0;
 
 export default async function Home() {
   const [videos, streams] = await Promise.all([
-    getLivepeerVideos(12),
+    getLivepeerVideos(20), 
     getLivepeerStreams(),
   ]);
 
@@ -24,165 +26,233 @@ export default async function Home() {
       : null;
   const isLive = Boolean(latestStream?.isActive && latestStream?.playbackId);
 
+  // 1. Real Uploaded Videos (All categories, sorted by date)
+  const recentVideos = videos;
+
+  // Filter videos by category (category is a top-level property, not nested in metadata)
+  const worshipVideos = videos.filter(v => v.category === 'worship');
+  const sermonVideos = videos.filter(v => v.category === 'sermon');
+  const conferenceVideos = videos.filter(v => v.category === 'conference');
+
+  // Placeholder Data for "Worship Experiences" (Fallback if no real data)
+  const worshipPlaceholders = [
+    {
+      id: 'worship-1',
+      title: 'Endless Celebration Night',
+      description: 'A night of powerful worship and praise.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
+    {
+      id: 'worship-2',
+      title: 'Easter at Celebration',
+      description: 'He is Risen! Join us for this special service.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1544427920-24e832256172?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
+  ];
+
+  // Placeholder Data for "Sermon Series" (Fallback)
+  const sermonPlaceholders = [
+    {
+      id: 'series-1',
+      title: 'The Book of Romans',
+      description: 'Understanding grace and righteousness.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
+    {
+      id: 'series-2',
+      title: 'Kingdom Culture',
+      description: 'Living out the values of the Kingdom.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 0,
+      isFree: true,
+      status: 'ready'
+    },
+  ];
+
+  // Placeholder Data for "Conferences & Events" (Fallback)
+  const conferencePlaceholders = [
+    {
+      id: 'conf-1',
+      title: 'Leadership Summit 2024',
+      description: 'Equipping leaders for the next season.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1475721027767-305246394162?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 19.99,
+      isFree: false,
+      status: 'ready'
+    },
+    {
+      id: 'conf-2',
+      title: 'Women\'s Conference',
+      description: 'Empowering women to walk in their calling.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?q=80&w=1000&auto=format&fit=crop',
+      priceUsd: 14.99,
+      isFree: false,
+      status: 'ready'
+    },
+  ];
+
+  // Combine real data with placeholders if real data is sparse (optional, or just show real data)
+  // For now, let's prefer real data, but fallback to placeholders if empty to keep the UI populated
+  const displayWorship = worshipVideos.length > 0 ? worshipVideos : worshipPlaceholders;
+  const displaySermons = sermonVideos.length > 0 ? sermonVideos : sermonPlaceholders;
+  const displayConferences = conferenceVideos.length > 0 ? conferenceVideos : conferencePlaceholders;
+
+  // Mock Schedule Data
+  const schedule = [
+    { time: '10:00 AM', title: 'Sunday Celebration', status: 'Live' },
+    { time: '6:00 PM', title: 'Evening Worship', status: 'Upcoming' },
+    { time: 'Wed 7:00 PM', title: 'Midweek Bible Study', status: 'Upcoming' },
+    { time: 'Fri 8:00 PM', title: 'Youth Encounter', status: 'Upcoming' },
+  ];
+
   return (
-    <div className="flex min-h-screen flex-col bg-black relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-20 right-1/4 w-96 h-96 bg-[#FF6B35] rounded-full filter blur-[128px] animate-pulse"></div>
-        <div className="absolute bottom-20 left-1/4 w-96 h-96 bg-[#00D9FF] rounded-full filter blur-[128px] animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-[#B24BF3] rounded-full filter blur-[128px] animate-pulse" style={{animationDelay: '2s'}}></div>
-      </div>
+    <div className="flex min-h-screen flex-col bg-[#050505] text-white relative overflow-x-hidden font-sans">
+      <LiveStatusPoller currentIsLive={isLive} />
       
       <Navigation />
       
-      <main className="flex-1 relative z-10">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          {isLive && latestStream && (
-            <Link
-              href={`/streams/${latestStream.slug}`}
-              className="mb-6 flex items-center justify-between rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-600/20 via-red-500/10 to-transparent px-6 py-4 shadow-lg shadow-red-600/30 transition hover:border-red-400/60 hover:shadow-red-500/40"
-            >
-              <div className="flex items-center gap-4">
-                <div className="relative flex h-4 w-4">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"></span>
-                  <span className="relative inline-flex h-4 w-4 rounded-full bg-red-500"></span>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-wide text-red-200">
-                    Live now
-                  </p>
-                  <p className="text-base font-bold text-white">
-                    {latestStream.title}
-                  </p>
-                </div>
-              </div>
-              <div className="text-sm font-semibold text-white/80">
-                Watch →
-              </div>
-            </Link>
-          )}
+      <main className="flex-1 relative z-10 pb-20">
+        
+        {/* HERO SECTION: Livestream + Schedule */}
+        <div className="relative w-full bg-gradient-to-b from-[#111111] to-[#050505]">
+           {/* Background Glow */}
+           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[#c5a059]/10 blur-[120px] pointer-events-none" />
 
-          {/* Main Content Layout: Stream/Videos on left, Shop on right */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-            {/* Left Column: Livestream + Videos (3/4 width) */}
-            <div className="lg:col-span-3 space-y-8">
-              {/* Livestream Section */}
-              {latestStream && latestStream.isActive ? (
-                <div className="rounded-2xl border border-[#FF3366]/30 bg-black/60 backdrop-blur-md p-6 shadow-2xl shadow-[#FF3366]/20 hover:shadow-[#FF3366]/30 transition-all duration-500 animated-border">
-                  <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                      <div className="mb-2 flex items-center gap-3">
-                        <span className="relative flex h-4 w-4">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF3366] opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-4 w-4 bg-[#FF3366]"></span>
-                        </span>
-                        <span className="text-sm font-black text-[#FF3366] uppercase tracking-wider flex items-center gap-2">
-                          <span className="text-xl">🔴</span>
-                          LIVE NOW
-                        </span>
-                      </div>
-                      <h2 className="text-3xl md:text-4xl font-black text-white drop-shadow-lg">
-                        {latestStream.title}
-                      </h2>
-                      {latestStream.description && (
-                        <p className="mt-2 text-lg text-white/80 font-medium">
-                          {latestStream.description}
-                        </p>
-                      )}
-                    </div>
-                    <Link
-                      href={`/streams/${latestStream.slug}`}
-                      className="px-8 py-3 rounded-full font-black text-white bg-gradient-to-r from-[#FF3366] to-[#FF6B35] hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-[#FF6B35]/50 uppercase tracking-wide border-2 border-white/20"
-                    >
-                      Watch Live →
-                    </Link>
-                  </div>
-                  <div className="w-full rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+           <div className="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8 pt-6 pb-12">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                {/* Main Hero Card (Livestream/Featured) - Spans 9 columns */}
+                <div className="lg:col-span-9">
+                   <div className="relative overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10 bg-black aspect-video">
+                      {latestStream && isLive ? (
+                        <div className="h-full w-full flex flex-col">
                     <VideoPlayer
                       playbackId={latestStream.playbackId ?? latestStream.livepeerStreamId}
                       title={latestStream.title}
                       type="live"
                       showControls={true}
-                      autoPlay={false}
+                              autoPlay={true}
                       initialSrc={latestStreamSrc}
                     />
-                  </div>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md p-8 shadow-2xl">
-                  <div className="mb-6">
-                    <h2 className="text-3xl font-black text-white flex items-center gap-3 drop-shadow-md">
-                      <span className="text-4xl">📡</span>
-                      Live Stream
-                    </h2>
-                    <p className="mt-2 text-lg text-white/60">
-                      No live streams at the moment
-                    </p>
-                  </div>
-                  <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-black/40 border border-white/5 backdrop-blur-sm">
-                    <div className="text-center">
-                      <div className="relative inline-block group">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#FF6B35] to-[#00D9FF] opacity-20 blur-xl rounded-full group-hover:opacity-40 transition-opacity"></div>
-                        <svg
-                          className="relative mx-auto h-20 w-20 text-white/20 group-hover:text-white/40 transition-colors"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
-                        </svg>
-                      </div>
-                      <p className="mt-6 text-lg font-medium text-white/50">
-                        Check back soon for live content
-                      </p>
+                         // Placeholder / Featured Content when NOT live
+                         <div className="relative h-full w-full bg-[#111111] flex items-center justify-center overflow-hidden group">
+                            {/* Featured Background Image (Placeholder) */}
+                            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-1000"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/60"></div>
+                            
+                            <div className="relative z-10 text-center px-4 max-w-3xl">
+                               <span className="inline-block py-1 px-3 rounded-full bg-[#c5a059]/20 backdrop-blur-sm text-xs font-bold tracking-wider uppercase mb-4 text-[#c5a059] border border-[#c5a059]/30">
+                                  Featured Message
+                               </span>
+                               <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl tracking-tight">
+                                  Endless Celebration
+                               </h1>
+                               <p className="text-lg md:text-xl text-slate-200 mb-8 font-medium max-w-2xl mx-auto drop-shadow-md">
+                                  Leading people to a life of endless celebration in Christ. Watch our latest service now.
+                               </p>
+                               <div className="flex items-center justify-center gap-4">
+                                  <button className="px-8 py-3 bg-[#c5a059] text-black font-bold rounded-md hover:bg-[#e5c07b] transition-colors flex items-center gap-2">
+                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                     Watch Now
+                                  </button>
+                                  <button className="px-8 py-3 bg-white/5 backdrop-blur-md text-white font-bold rounded-md hover:bg-white/10 transition-colors flex items-center gap-2 border border-white/10">
+                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                     Learn More
+                                  </button>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Videos Grid Section */}
-              <div className="rounded-2xl border border-white/5 bg-black/30 backdrop-blur-md p-6 lg:p-8">
-                <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
-                  <div>
-                    <h2 className="text-4xl font-black text-white flex items-center gap-3 drop-shadow-md">
-                      <span className="text-5xl">🎬</span>
-                      Latest Videos
-                    </h2>
-                    <p className="mt-2 text-lg text-white/70 font-medium">
-                      On-demand highlights and full replays
-                    </p>
+                      {/* Live Indicator overlay if live */}
+                      {isLive && (
+                         <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-600/90 backdrop-blur-md px-3 py-1 rounded-md z-20">
+                            <span className="animate-pulse block w-2 h-2 rounded-full bg-white"></span>
+                            <span className="text-xs font-bold uppercase tracking-wider text-white">Live Now</span>
+                         </div>
+                      )}
+                   </div>
+
+                   {/* Stream Info Bar */}
+                   {latestStream && isLive && (
+                      <div className="mt-4 p-4 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-white/10">
+                         <h2 className="text-2xl font-bold text-white mb-1">{latestStream.title}</h2>
+                         <p className="text-slate-400">{latestStream.description || "Join us for our live broadcast."}</p>
                   </div>
-                  {videos.length > 0 && (
-                    <Link
-                      href="/videos"
-                      className="hidden sm:inline-flex px-6 py-2 rounded-full font-bold text-sm text-white border border-white/20 hover:bg-white/10 transition-colors items-center gap-2"
-                    >
-                      View All <span className="text-xl">→</span>
-                    </Link>
                   )}
                 </div>
 
-                {videos.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-white/10 bg-white/5 p-16 text-center">
-                    <h3 className="text-2xl font-black text-white">No videos yet</h3>
-                    <p className="mt-2 text-white/50">Content is being cooked up! 🏀</p>
+                {/* Right Side: Schedule / Up Next - Spans 3 columns */}
+                <div className="lg:col-span-3 flex flex-col h-full">
+                   <div className="bg-[#111111]/80 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex-1 flex flex-col overflow-hidden shadow-xl">
+                      <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+                         <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                            <span className="text-xl">📅</span> Schedule
+                         </h3>
+                         <Link href="/schedule" className="text-xs text-[#c5a059] hover:text-[#e5c07b] font-medium uppercase tracking-wider">
+                            View All
+                         </Link>
+                      </div>
+
+                      <div className="flex-1 overflow-y-auto space-y-1 pr-2 custom-scrollbar">
+                         {/* Active Now Item */}
+                         {isLive && (
+                            <div className="p-3 rounded-lg bg-gradient-to-r from-red-900/40 to-transparent border-l-4 border-red-600 mb-4">
+                               <div className="flex justify-between items-start mb-1">
+                                  <span className="text-red-400 text-xs font-bold uppercase tracking-wider">On Air</span>
+                                  <span className="bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase">Live</span>
+                               </div>
+                               <h4 className="font-bold text-white text-sm leading-tight">{latestStream?.title}</h4>
+                               <p className="text-xs text-slate-400 mt-1 line-clamp-1">{latestStream?.description}</p>
+                            </div>
+                         )}
+
+                         {/* Schedule Items */}
+                         {schedule.map((item, idx) => (
+                            <div key={idx} className="group p-3 rounded-lg hover:bg-white/5 transition-colors border-l-4 border-transparent hover:border-[#c5a059]">
+                               <div className="flex justify-between items-center mb-1">
+                                  <span className="text-slate-400 text-xs font-mono">{item.time}</span>
+                                  {item.status === 'Live' && !isLive && ( // Fallback if main player isn't showing live
+                                     <span className="bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase">Live</span>
+                                  )}
+                               </div>
+                               <h4 className="font-semibold text-slate-200 text-sm group-hover:text-white transition-colors">{item.title}</h4>
+                            </div>
+                         ))}
+
+                         {/* Promo / Giving Card Small */}
+                         <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-[#c5a059]/20 to-[#998045]/20 border border-[#c5a059]/20 text-center">
+                            <h4 className="text-[#c5a059] font-bold text-sm mb-2">Support the Ministry</h4>
+                            <Link href="/products" className="block w-full py-2 rounded bg-[#c5a059] hover:bg-[#e5c07b] text-xs font-bold text-black transition-colors">
+                               Give Now
+                            </Link>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+              </div>
+           </div>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {videos.map((video, index) => (
-                      <div
-                        key={video.slug}
-                        className="animate-fade-in-up"
-                        style={{
-                          animationDelay: `${index * 50}ms`,
-                          opacity: 0,
-                        }}
-                      >
+
+        {/* CAROUSEL SECTIONS */}
+        <div className="space-y-4 pb-12 -mt-8 relative z-20">
+           
+           {/* 1. Uploaded Videos */}
+           {recentVideos.length > 0 && (
+             <VideoCarousel title="Recent Uploads" viewAllLink="/videos">
+                {recentVideos.map((video) => (
+                   <div key={video.slug} className="min-w-[280px] sm:min-w-[320px] snap-start">
                         <VideoCard
                           id={video.slug}
                           href={`/videos/${video.slug}`}
@@ -195,86 +265,63 @@ export default async function Home() {
                         />
                       </div>
                     ))}
-                  </div>
+             </VideoCarousel>
                 )}
                 
-                {videos.length > 0 && (
-                  <div className="mt-8 text-center sm:hidden">
-                    <Link
-                      href="/videos"
-                      className="inline-block w-full px-6 py-3 rounded-lg font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition-all"
-                    >
-                      View All Videos →
-                    </Link>
+           {/* 2. Worship Experiences */}
+           <VideoCarousel title="Worship Experiences">
+              {displayWorship.map((video: any) => (
+                 <div key={video.slug || video.id} className="min-w-[280px] sm:min-w-[320px] snap-start">
+                    <VideoCard
+                       id={video.slug || video.id}
+                       href={video.slug ? `/videos/${video.slug}` : '#'} 
+                       title={video.title}
+                       description={video.description}
+                       thumbnailUrl={video.thumbnailUrl}
+                       priceUsd={video.priceUsd}
+                       isFree={video.isFree}
+                       status={video.status}
+                    />
                   </div>
-                )}
-                
-                {videos.length >= 6 && (
-                   <div className="mt-10 flex justify-center">
-                      <Link
-                        href="/videos"
-                        className="px-10 py-4 rounded-full font-black text-lg text-white bg-gradient-to-r from-[#00D9FF] to-[#B24BF3] hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-[#00D9FF]/50 border-2 border-white/20 flex items-center gap-3"
-                      >
-                        View More Videos <span className="text-2xl">📺</span>
-                      </Link>
+              ))}
+           </VideoCarousel>
+
+           {/* 3. Sermon Series */}
+           <VideoCarousel title="Sermon Series">
+              {displaySermons.map((video: any) => (
+                 <div key={video.slug || video.id} className="min-w-[280px] sm:min-w-[320px] snap-start">
+                    <VideoCard
+                       id={video.slug || video.id}
+                       href={video.slug ? `/videos/${video.slug}` : '#'}
+                       title={video.title}
+                       description={video.description}
+                       thumbnailUrl={video.thumbnailUrl}
+                       priceUsd={video.priceUsd}
+                       isFree={video.isFree}
+                       status={video.status}
+                    />
                    </div>
-                )}
-              </div>
-            </div>
+              ))}
+           </VideoCarousel>
 
-            {/* Right Column: Shop (1/4 width) */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-24 h-[calc(100vh-120px)] min-h-[500px] rounded-2xl border border-[#B24BF3]/40 bg-black/60 backdrop-blur-md p-8 shadow-2xl shadow-[#B24BF3]/10 flex flex-col relative overflow-hidden group">
-                {/* Decorative background inside card */}
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1515523110800-9415d13b84a8?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay transition-transform duration-700 group-hover:scale-110"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/80 to-black"></div>
-                
-                <div className="relative z-10 flex-1 flex flex-col">
-                  <h2 className="text-3xl font-black text-white flex items-center gap-3 drop-shadow-md mb-2">
-                    <span className="text-4xl">🛍️</span>
-                    Shop
-                  </h2>
-                  <p className="text-white/60 font-medium">Official Merch</p>
-                  
-                  <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 my-8">
-                    <div className="relative w-40 h-40 flex items-center justify-center">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-[#B24BF3] to-[#FF3366] opacity-30 blur-2xl rounded-full animate-pulse"></div>
-                      <div className="relative w-32 h-32 bg-white/5 rounded-full border-2 border-white/10 flex items-center justify-center backdrop-blur-sm transform group-hover:rotate-12 transition-transform duration-500">
-                         <span className="text-6xl">👕</span>
+            {/* 4. Conferences & Events */}
+           <VideoCarousel title="Conferences & Events">
+              {displayConferences.map((video: any) => (
+                 <div key={video.slug || video.id} className="min-w-[280px] sm:min-w-[320px] snap-start">
+                    <VideoCard
+                       id={video.slug || video.id}
+                       href={video.slug ? `/videos/${video.slug}` : '#'}
+                       title={video.title}
+                       description={video.description}
+                       thumbnailUrl={video.thumbnailUrl}
+                       priceUsd={video.priceUsd}
+                       isFree={video.isFree}
+                       status={video.status}
+                    />
                       </div>
-                      <div className="absolute -top-2 -right-2 px-3 py-1 bg-[#FF6B35] rounded-full text-xs font-black text-white transform rotate-12 shadow-lg">
-                        DROPPING SOON
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-2xl font-black text-white mb-3">
-                        Gear Up
-                      </h3>
-                      <p className="text-white/70 text-sm leading-relaxed">
-                        Exclusive jerseys, sneakers, and collectibles coming straight to your door.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="w-full bg-white/5 rounded-xl p-4 border border-white/10 backdrop-blur-sm">
-                    <div className="flex justify-between text-xs font-bold text-white/40 mb-2 uppercase tracking-wider">
-                      <span>Launch Progress</span>
-                      <span>85%</span>
-                    </div>
-                    <div className="w-full h-3 bg-black/50 rounded-full overflow-hidden border border-white/5">
-                      <div className="h-full w-[85%] bg-gradient-to-r from-[#FF6B35] via-[#FF3366] to-[#B24BF3] rounded-full relative overflow-hidden">
-                        <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite] skew-x-12"></div>
-                      </div>
-                    </div>
-                    <button className="mt-4 w-full py-3 rounded-lg font-bold text-white/40 bg-white/5 border border-white/5 cursor-not-allowed text-xs uppercase tracking-widest hover:bg-white/10 transition-colors">
-                      Notify Me
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+              ))}
+           </VideoCarousel>
+           
         </div>
       </main>
 

@@ -21,6 +21,7 @@ import {
 } from '@livepeer/react/player';
 import type { Src } from '@livepeer/react';
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 const buildHlsSrc = (url: string): Src =>
   ({
@@ -57,6 +58,7 @@ export default function VideoPlayer({
   const [isLoadingSource, setIsLoadingSource] = useState(!initialSrc);
   const [error, setError] = useState<string | null>(null);
   const mountTimeRef = useRef(Date.now());
+  const router = useRouter();
   
   // Fetch the playback URL from our API (which uses the Livepeer SDK)
   useEffect(() => {
@@ -65,41 +67,46 @@ export default function VideoPlayer({
       return;
     }
 
-    if (initialSrc) {
+    // If we have initialSrc from server-side, use it directly (no API call needed)
+    if (initialSrc && initialSrc.length > 0) {
+      console.log('[Video Player] Using server-provided playback sources:', initialSrc.length, 'sources');
       setSource(initialSrc);
       setIsLoadingSource(false);
+      setError(null);
       return;
     }
     
     const trimmedPlaybackId = playbackId.trim();
-    console.log('[Video Player] Fetching playback URL for:', trimmedPlaybackId);
-    
-    const fallbackCdnUrl = `https://livepeercdn.studio/hls/${trimmedPlaybackId}/index.m3u8`;
+    console.log('[Video Player] Fetching playback sources from API for:', trimmedPlaybackId);
 
     fetch(`/api/videos/playback-url?playbackId=${encodeURIComponent(trimmedPlaybackId)}`)
       .then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `Failed to fetch playback URL: ${response.status}`);
+          throw new Error(errorData.error || `Failed to fetch playback sources: ${response.status}`);
         }
         
         return response.json();
       })
       .then((data) => {
-        if (data.playbackUrl) {
-          console.log('[Video Player] Fetched playback URL:', data.playbackUrl.substring(0, 100) + '...');
+        if (data.src && Array.isArray(data.src) && data.src.length > 0) {
+           console.log('[Video Player] Fetched', data.src.length, 'playback sources from API');
+           setSource(data.src);
+           setError(null);
+        } else if (data.playbackUrl) {
+          console.log('[Video Player] Fetched single HLS URL from API');
           setSource([buildHlsSrc(data.playbackUrl)]);
           setError(null);
         } else {
-          console.warn('[Video Player] No playback URL in response, falling back to CDN');
-          setSource([buildHlsSrc(fallbackCdnUrl)]);
-          setError(null);
+          console.warn('[Video Player] No valid playback sources in API response');
+          setSource(null);
+          setError('Video not ready for playback');
         }
       })
       .catch((err) => {
-        console.error('[Video Player] Error fetching playback URL, using fallback CDN URL:', err);
-        setSource([buildHlsSrc(fallbackCdnUrl)]);
-        setError(null);
+        console.error('[Video Player] API fetch failed:', err.message);
+        setSource(null);
+        setError('Unable to load video');
       })
       .finally(() => {
         setIsLoadingSource(false);
@@ -158,6 +165,8 @@ export default function VideoPlayer({
       <Root
         src={src}
         autoPlay={autoPlay}
+        muted={autoPlay} // Mute if autoplay is enabled
+        volume={autoPlay ? 0 : 1} // Force mute for autoplay to work reliably
         onError={(error) => {
           // Livepeer player fires benign errors while warming up live streams
           // These should be completely ignored to avoid alarming users
@@ -177,32 +186,52 @@ export default function VideoPlayer({
           
           // Check if error is essentially empty (common during stream initialization)
           const errorJson = JSON.stringify(error);
-          const isEmptyError = errorJson === '{}' || errorJson === '[]';
+          const isEmptyError = errorJson === '{}' || errorJson === '[]' || !errorJson;
           
-          // Check for the specific "canPlay timeout" error
-          const isCanPlayTimeout = errorMessage.toLowerCase().includes('canplay') || 
-                                   errorMessage.toLowerCase().includes('timeout');
+          // Check for the specific "canPlay timeout" error and parsing errors
+          const lowerMsg = errorMessage.toLowerCase();
+          const isBenignError = 
+            lowerMsg.includes('canplay') || 
+            lowerMsg.includes('timeout') ||
+            lowerMsg.includes('levelparsingerror') ||
+            lowerMsg.includes('manifestparsingerror') ||
+            lowerMsg.includes('manifestloaderror') ||
+            lowerMsg.includes('failed to fetch') ||
+            lowerMsg.includes('error fetching') ||
+            lowerMsg.includes('error with hls');
           
-          // Ignore all benign error types:
+          // If it's a parsing error on a live stream, it likely means the stream ended
+          // Also catch empty errors on live streams which are common when the stream cuts
+          if (type === 'live' && (isBenignError || isEmptyError || !errorMessage)) {
+             // Silently suppress - don't log anything
+             setError(null); 
+             router.refresh();
+             return;
+          }
+          
+          // Ignore all benign error types (including empty errors for VOD):
           if (
             errorType === 'timeout' ||           // Timeout type
+            errorType === 'unknown' ||           // Unknown type (usually benign)
             errorCode === 'timeout' ||           // Timeout code
-            isCanPlayTimeout ||                  // canPlay timeout message
+            isBenignError ||                     // Benign messages
             (!errorType && !errorMessage) ||     // No type or message
             isEmptyError                         // Completely empty object
           ) {
-            // Silently ignore - these are expected during live stream warmup
+            // Silently ignore - DO NOT LOG to prevent console spam
             return;
           }
           
-          // Only log and show UI errors for actual playback failures
-          console.error('[Video Player] Playback error:', {
+          // Only log and show UI errors for actual playback failures that are NOT empty
+          // and have meaningful error messages
+          if (!isEmptyError && errorMessage && errorMessage.length > 2) {
+            console.error('[Video Player] Critical playback error:', {
             type: errorType,
             message: errorMessage,
             code: errorCode,
-            error
           });
           setError(errorMessage || 'Playback error occurred');
+          }
         }}
       >
         <Container className="aspect-video w-full rounded-xl overflow-hidden bg-black border border-white/10">
@@ -210,34 +239,47 @@ export default function VideoPlayer({
             title={title}
             poster={poster}
             className="h-full w-full object-contain"
+            playsInline
+            muted={autoPlay} // Mute if autoplay is enabled
+            crossOrigin="anonymous"
             onLoadStart={() => console.log('[Video Player] Video load started')}
             onCanPlay={() => console.log('[Video Player] Video can play')}
             onPlay={() => console.log('[Video Player] Video playing')}
-            onError={(e) => console.error('[Video Player] Video element error:', e)}
+            // Suppress benign video element errors too
+            onError={(e) => {
+               // Basic suppression for element-level errors
+            }}
           />
 
-          {/* Loading Indicator */}
-          <LoadingIndicator className="absolute inset-0 bg-black/50 backdrop-blur data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-12 h-12 border-4 border-[#FF6B35] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          </LoadingIndicator>
-
           {/* Error: Stream Offline (for live streams) */}
+          {/* We treat 'offline' matcher as a generic error state if the stream isn't playing yet */}
           <ErrorIndicator
             matcher="offline"
             className="absolute inset-0 bg-black/90 backdrop-blur flex items-center justify-center data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
           >
             <div className="text-center p-8">
-              <div className="text-2xl font-black gradient-text mb-3">
-                Stream is offline
+              <div className="text-2xl font-black text-slate-300 mb-3">
+                Waiting for stream...
               </div>
-              <p className="text-white/60 text-sm">
-                Playback will start automatically once the stream begins
+              <p className="text-slate-500 text-sm">
+                The broadcast is live but video is still loading.
               </p>
-              <div className="w-12 h-12 mx-auto mt-6 border-4 border-[#00D9FF] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-12 h-12 mx-auto mt-6 border-4 border-[#c5a059] border-t-transparent rounded-full animate-spin"></div>
             </div>
           </ErrorIndicator>
+
+          {/* Loading State (Spinning Circle) */}
+          {/* This handles the initial buffering/connection phase */}
+          <LoadingIndicator className="absolute inset-0 bg-black/50 backdrop-blur flex items-center justify-center data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0">
+             <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 border-4 border-[#c5a059] border-t-transparent rounded-full animate-spin"></div>
+                {type === 'live' && (
+                  <p className="text-white/80 text-sm font-medium animate-pulse">
+                    Connecting to live stream...
+                  </p>
+                )}
+             </div>
+          </LoadingIndicator>
 
           {/* Error: Access Control */}
           <ErrorIndicator
@@ -245,10 +287,10 @@ export default function VideoPlayer({
             className="absolute inset-0 bg-black/90 backdrop-blur flex items-center justify-center data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
           >
             <div className="text-center p-8">
-              <div className="text-2xl font-black gradient-text mb-3">
+              <div className="text-2xl font-black text-red-500 mb-3">
                 Stream is private
               </div>
-              <p className="text-white/60 text-sm">
+              <p className="text-slate-500 text-sm">
                 You don't have permission to view this content
               </p>
             </div>
@@ -260,10 +302,10 @@ export default function VideoPlayer({
             className="absolute inset-0 bg-black/90 backdrop-blur flex items-center justify-center data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:fade-out-0 data-[visible=true]:fade-in-0"
           >
             <div className="text-center p-8">
-              <div className="text-2xl font-black text-white mb-3">
+              <div className="text-2xl font-black text-slate-300 mb-3">
                 Playback Error
               </div>
-              <p className="text-white/60 text-sm">
+              <p className="text-slate-500 text-sm">
                 Unable to load video. Please try again later.
               </p>
             </div>
@@ -276,7 +318,7 @@ export default function VideoPlayer({
               <div className="mb-3">
                 <Seek className="group relative flex cursor-pointer items-center select-none touch-none w-full h-5">
                   <Track className="bg-white/20 relative grow rounded-full h-[3px] group-hover:h-[4px] transition-all">
-                    <Range className="absolute bg-gradient-to-r from-[#FF6B35] to-[#FF3366] rounded-full h-full" />
+                    <Range className="absolute bg-[#c5a059] rounded-full h-full" />
                   </Track>
                   <Thumb className="block group-hover:scale-125 w-3 h-3 bg-white transition-transform rounded-full shadow-lg" />
                 </Seek>
@@ -352,4 +394,3 @@ export default function VideoPlayer({
 
 // Also export as named export for backward compatibility
 export { VideoPlayer };
-

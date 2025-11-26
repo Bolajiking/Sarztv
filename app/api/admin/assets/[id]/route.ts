@@ -11,23 +11,44 @@ export async function DELETE(
     const { id } = await params;
     const userId = request.headers.get('x-user-id');
 
+    console.log(`[Admin API] Delete Asset Request for ID: ${id}, User: ${userId}`);
+
     if (!userId || !isAdmin(userId)) {
+      console.warn(`[Admin API] Unauthorized delete attempt by user: ${userId}`);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await deleteLivepeerAsset(id);
+    try {
+      await deleteLivepeerAsset(id);
+    } catch (lpError: any) {
+      // Check if error is "not found" (already deleted)
+      // Livepeer SDK might throw different error structures, so we check message and status
+      const isNotFound = 
+        lpError?.status === 404 || 
+        lpError?.message?.toLowerCase().includes('not found') ||
+        lpError?.body?.errors?.[0] === 'not found';
+
+      if (isNotFound) {
+        console.warn(`[Admin API] Asset ${id} not found in Livepeer, assuming already deleted.`);
+      } else {
+        console.error(`[Admin API] Error deleting asset ${id} from Livepeer:`, lpError);
+        // We might still want to return success if we just want to remove it from our UI cache
+        // But for now, let's return the error so the user knows something went wrong
+        throw lpError;
+      }
+    }
     
     // Revalidate caches to remove from UI immediately
-    revalidateTag('livepeer-assets', {});
-    revalidateTag('livepeer-recorded-sessions', {});
+    console.log('[Admin API] Revalidating caches...');
+    revalidateTag('livepeer-assets');
+    revalidateTag('livepeer-recorded-sessions');
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error deleting asset:', error);
+    console.error('[Admin API] Error in DELETE /api/admin/assets/[id]:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to delete asset' },
       { status: 500 }
     );
   }
 }
-
