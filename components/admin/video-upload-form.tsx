@@ -119,11 +119,11 @@ export function VideoUploadForm({ onSuccess }: VideoUploadFormProps) {
         throw new Error('No upload URL received from server');
       }
 
-      // Step 2: Upload file directly to Livepeer using TUS (fast - direct upload)
+      // Step 2: Upload file directly to CCITV using TUS (fast - direct upload)
       setUploadProgress({
         status: 'uploading',
         progress: 5,
-        message: 'Uploading video to Livepeer...',
+        message: 'Uploading video to CCITV...',
       });
 
       // Dynamically import TUS client

@@ -156,11 +156,11 @@ export function StreamCreateForm({ onSuccess }: StreamCreateFormProps) {
                   className="h-4 w-4 rounded border-zinc-300 text-black focus:ring-black dark:border-zinc-700 dark:focus:ring-white"
                 />
                 <label htmlFor="stream-record-enabled" className="ml-2 text-sm text-zinc-700 dark:text-zinc-300">
-                  Record this session (saves a VOD in Livepeer)
+                  Record this session (saves a VOD for replay)
                 </label>
               </div>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                When enabled, Livepeer will capture the broadcast and create a replay automatically.
+                When enabled, CCITV will capture the broadcast and create a replay automatically.
               </p>
             </div>
           </div>

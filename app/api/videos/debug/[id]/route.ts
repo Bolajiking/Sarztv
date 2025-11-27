@@ -120,20 +120,20 @@ function getDiagnosis(
   playbackSources: any
 ): string {
   if (!livepeerAsset) {
-    return '❌ CRITICAL: Livepeer asset not found. Video may have been deleted from Livepeer. Try re-uploading.';
+    return '❌ CRITICAL: Video asset not found. Video may have been deleted. Try re-uploading.';
   }
 
   const assetStatus = livepeerAsset.status?.phase || livepeerAsset.status;
   if (assetStatus !== 'ready' && assetStatus !== 'completed') {
-    return `⏳ PROCESSING: Video is still being processed by Livepeer (status: ${assetStatus}). Wait 2-5 minutes and try again.`;
+    return `⏳ PROCESSING: Video is still being processed (status: ${assetStatus}). Wait 2-5 minutes and try again.`;
   }
 
   if (!playbackInfo || !playbackInfo.playbackId) {
-    return '⚠️ WARNING: Livepeer asset is "ready" but has no playback ID. This is unusual. Check Livepeer dashboard or try re-uploading.';
+    return '⚠️ WARNING: Video asset is "ready" but has no playback ID. This is unusual. Try re-uploading.';
   }
 
   if (!playbackSources || playbackSources.length === 0) {
-    return '⚠️ WARNING: Playback ID exists but no playback sources are available. The video may need more processing time, or there may be an issue with the Livepeer API.';
+    return '⚠️ WARNING: Playback ID exists but no playback sources are available. The video may need more processing time.';
   }
 
   return '✅ OK: Video should be playable. If playback still fails, check browser console for network errors (timeouts, CORS, etc.).';
