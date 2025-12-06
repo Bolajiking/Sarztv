@@ -49,8 +49,8 @@ export function Navigation() {
               href="/" 
               className="text-2xl font-black text-white hover:scale-105 transform transition-transform duration-300 flex items-center gap-2"
             >
-              <span className="text-3xl">✝️</span>
-              <span className="gradient-text">CCI TV</span>
+              <span className="text-3xl">🎹</span>
+              <span className="gradient-text">SARZ TV</span>
             </Link>
           </div>
 
@@ -60,20 +60,20 @@ export function Navigation() {
               href="/videos"
               className="relative px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-all duration-300 hover:bg-white/5 rounded-md"
             >
-              Video Library
+              Videos
             </Link>
             <Link
               href="/streams"
               className="relative px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-all duration-300 hover:bg-white/5 rounded-md flex items-center gap-2"
             >
               <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-              Live Services
+              Live Sessions
             </Link>
             <Link
               href="/products"
               className="relative px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-all duration-300 hover:bg-white/5 rounded-md"
             >
-              Hub
+              Store
             </Link>
             {mounted && isAuthenticated && !adminLoading && (
               <>
@@ -160,7 +160,7 @@ export function Navigation() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors font-semibold flex items-center gap-3"
               >
-                <span>🎬</span> Video Library
+                <span>🎬</span> Videos
               </Link>
               <Link
                 href="/streams"
@@ -171,14 +171,14 @@ export function Navigation() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                 </span>
-                Live Services
+                Live Sessions
               </Link>
               <Link
                 href="/products"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors font-semibold flex items-center gap-3"
               >
-                <span>🛍️</span> Ministry Hub
+                <span>🛍️</span> Store
               </Link>
               
               {mounted && isAuthenticated && isAdmin && !adminLoading && (

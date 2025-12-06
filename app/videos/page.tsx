@@ -21,10 +21,10 @@ export default async function VideosPage() {
           <div className="mb-12 text-center">
             <h1 className="text-3xl md:text-5xl font-black text-white flex items-center justify-center gap-4 drop-shadow-lg">
               <span className="text-4xl md:text-6xl">🎬</span>
-              Video Library
+              Videos
             </h1>
             <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto">
-              Explore our premium collection of exclusive sermons, worship moments, and inspiring content.
+              Explore our collection of exclusive music videos, documentaries, and studio sessions.
             </p>
           </div>
 
@@ -50,7 +50,7 @@ export default async function VideosPage() {
                 Library is empty
               </h3>
               <p className="mt-3 text-base text-slate-400">
-                New productions and messages will be premiered here soon.
+                New productions and visuals will be premiered here soon.
               </p>
             </div>
           ) : (

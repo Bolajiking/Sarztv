@@ -1,54 +1,37 @@
-# CCI TV Project Scratchpad
+# Project Plan: SARZ TV Customization
 
 ## Background and Motivation
-
-**CCI TV** is a customized streaming application being built for a religious organization to expand their media outfit. 
-
-**Legacy Context:** The application is being rebuilt/rebranded from an existing codebase "Full Court" (a basketball streaming platform).
-**Core Features:**
-- Livestreaming (Church services, events)
-- On-demand video (Sermons, messages)
-- Ministry Store (formerly Creator Stores)
-- Donations/Giving (formerly Livestream donations)
-- Payments for premium content/videos
-
-**Goal:** Analyze the current structure and rebuild the app with a design, style, and structure suitable for a religious brand and their ministry.
-
-## Key Challenges and Analysis
-
-- **Rebranding:** Complete overhaul of the visual identity from "Sporty" (Neon/Orange/Black) to "Ministry" (Gold/Blue/White/Clean).
-- **Terminology Update:** 
-  - "Full Court" -> "CCI TV"
-  - "Videos" -> "Video Library"
-  - "Live Streams" -> "Live Services"
-  - "Products" -> "Resources" or "Store"
-- **Broadcaster Education:** The user needed specific help with OBS Sources.
+The project "CCI TV" has been successfully rebranded and customized into "SARZ TV", a streaming platform for the Nigerian artiste/producer Sarz. The changes include a full rebrand of the UI, updated content structure (Sermons -> Music Videos, etc.), and placeholder data relevant to a music artist.
 
 ## High-level Task Breakdown
 
-### Phase 1-10 (Completed)
-- Branding, UI, Content Strategy, Responsiveness, Playback Reliability, Documentation, and Troubleshooting help are done.
+### Phase 1: Rebranding & Content Updates (Completed)
+- [x] Update Global Metadata & Branding (Title, Description, Logo text)
+- [x] Update Navigation & Footer (Links, Labels)
+- [x] Refactor Homepage Content (`app/page.tsx`)
+    - [x] Change Hero text/imagery placeholders
+    - [x] Rename Categories (Worship -> Studio Sessions, Sermons -> Music Videos, etc.)
+    - [x] Update Placeholder Data to reflect Sarz's content
+- [x] Update "Ministry Hub" to "Sarz Store" in UI (`app/products/page.tsx`)
+- [x] Update "Live Services" to "Live Sessions" (`app/streams/page.tsx`)
+- [x] Update "Video Library" to "Videos" (`app/videos/page.tsx`)
+- [x] Update Admin Dashboard Dropdowns (`components/admin/video-upload-form.tsx`)
 
-### Phase 11: OBS Content Guide (Completed)
-1. **Documentation:**
-   - Created `OBS_SOURCES_GUIDE.md` with specific steps for adding Cameras, Audio, and Lyrics.
-2. **UI Update:**
-   - Updated Admin Stream form to mention adding "Video Capture Device" and "Audio Input Capture".
+### Phase 2: Design & Theming (Completed)
+- [x] Updated `globals.css` comment
+- [x] Retained premium dark/gold theme which fits the "Producer/Artist" vibe.
 
-## Project Status Board
-
-### Phase 11: OBS Content Guide
-- [x] Create `OBS_SOURCES_GUIDE.md`
-- [x] Add source tips to Admin Dashboard
+### Phase 3: Verification (Pending User Review)
+- [ ] Verify all links work
+- [ ] Verify no "Ministry" text remains visible
+- [ ] Ensure placeholder data looks realistic for a music producer
 
 ## Current Status / Progress Tracking
-
-**Current Task:** Phase 11 Complete.
-
-**Status:** 
-- OBS Guide created.
-- Admin UI updated.
+- [x] Project Initialized
+- [x] Analysis Complete
+- [x] Planning Phase
+- [x] Execution Phase Complete
+- [ ] Final Verification
 
 ## Executor's Feedback or Assistance Requests
-
-- Ready for launch.
+- The database schema (categories) remains as 'worship', 'sermon', etc. The UI maps these to new labels. A database migration would be needed to fully rename these values in the backend, but the frontend abstraction handles it for now.

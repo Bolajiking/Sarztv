@@ -4,6 +4,7 @@ import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { ProductCheckoutModal, Product } from '@/components/product-checkout-modal';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -27,42 +28,42 @@ export default function ProductsPage() {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-lg">
-              Ministry Hub
+              Sarz Store
             </h1>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-              Equipping the saints with resources for growth, outreach, and daily living.
+              Official beats, merch, and exclusive content.
             </p>
           </div>
 
           {/* Store Categories */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-             {/* Category 1: Digital Resources */}
+             {/* Category 1: Exclusive Beats */}
              <div className="group relative overflow-hidden rounded-2xl bg-[#111111] border border-white/10 hover:border-[#c5a059]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#c5a059]/10">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#c5a059]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="p-8 text-center">
                    <div className="w-16 h-16 mx-auto bg-[#c5a059]/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <span className="text-3xl">📚</span>
+                      <span className="text-3xl">🎹</span>
                    </div>
-                   <h3 className="text-xl font-bold text-white mb-2">E-Books & Guides</h3>
+                   <h3 className="text-xl font-bold text-white mb-2">Exclusive Beats</h3>
                    <p className="text-slate-400 text-sm mb-6">
-                      Digital devotionals, study guides, and theological resources for your personal walk.
+                      Premium instrumentals for your next hit record. Leased and exclusive rights available.
                    </p>
                    <button className="px-6 py-2 rounded-full bg-white/5 hover:bg-[#c5a059] hover:text-black text-white font-semibold text-sm transition-colors border border-white/10">
-                      Browse Library
+                      Browse Beats
                    </button>
                 </div>
              </div>
 
-             {/* Category 2: Merch & Apparel */}
+             {/* Category 2: Merch */}
              <div className="group relative overflow-hidden rounded-2xl bg-[#111111] border border-white/10 hover:border-[#e5c07b]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#e5c07b]/10">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#e5c07b]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="p-8 text-center">
                    <div className="w-16 h-16 mx-auto bg-[#e5c07b]/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <span className="text-3xl">👕</span>
                    </div>
-                   <h3 className="text-xl font-bold text-white mb-2">Kingdom Apparel</h3>
+                   <h3 className="text-xl font-bold text-white mb-2">Merch</h3>
                    <p className="text-slate-400 text-sm mb-6">
-                      Wear your faith. High-quality shirts, hoodies, and accessories that spark conversation.
+                      Official Sarz apparel. Hoodies, tees, and accessories.
                    </p>
                    <button className="px-6 py-2 rounded-full bg-white/5 hover:bg-[#e5c07b] hover:text-black text-white font-semibold text-sm transition-colors border border-white/10">
                       Shop Collection
@@ -70,19 +71,19 @@ export default function ProductsPage() {
                 </div>
              </div>
 
-             {/* Category 3: Partner Products */}
+             {/* Category 3: Sample Packs */}
              <div className="group relative overflow-hidden rounded-2xl bg-[#111111] border border-white/10 hover:border-[#998045]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#998045]/10">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#998045]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="p-8 text-center">
                    <div className="w-16 h-16 mx-auto bg-[#998045]/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <span className="text-3xl">🤝</span>
+                      <span className="text-3xl">💿</span>
                    </div>
-                   <h3 className="text-xl font-bold text-white mb-2">Partner Resources</h3>
+                   <h3 className="text-xl font-bold text-white mb-2">Sample Packs</h3>
                    <p className="text-slate-400 text-sm mb-6">
-                      Curated tools and materials from our ministry partners and trusted authors.
-            </p>
+                      Curated drums, loops, and one-shots from Sarz's personal library.
+                   </p>
                    <button className="px-6 py-2 rounded-full bg-white/5 hover:bg-[#998045] hover:text-black text-white font-semibold text-sm transition-colors border border-white/10">
-                      View Partners
+                      View Packs
                    </button>
                 </div>
              </div>
@@ -96,26 +97,29 @@ export default function ProductsPage() {
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Product Card 1 */}
                 <div className="group bg-[#111111] rounded-xl overflow-hidden border border-white/5 hover:border-[#c5a059]/30 transition-all">
-                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center text-6xl bg-[#1a1a1a] group-hover:scale-110 transition-transform duration-500">
-                         📖
+                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden group">
+                      {/* Placeholder Image */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"></div>
+                      <div className="absolute inset-0 flex items-center justify-center text-6xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                         🎹
                       </div>
-                      <div className="absolute top-3 right-3 bg-[#c5a059] text-black text-xs font-bold px-2 py-1 rounded">
+                      <div className="absolute top-3 right-3 z-20 bg-[#c5a059] text-black text-xs font-bold px-2 py-1 rounded shadow-lg">
                          NEW
                       </div>
                    </div>
-                   <div className="p-4">
-                      <h4 className="text-white font-bold mb-1">Daily Walk Devotional</h4>
-                      <p className="text-slate-400 text-xs mb-3">365 Days of Inspiration</p>
+                   <div className="p-4 relative z-20 bg-[#111111]">
+                      <h4 className="text-white font-bold mb-1">Afrobeat Pack Vol 1</h4>
+                      <p className="text-slate-400 text-xs mb-3">100+ Loops & One Shots</p>
                       <div className="flex items-center justify-between">
-                         <span className="text-white font-bold">$14.99</span>
+                         <span className="text-white font-bold">$29.99</span>
                          <button 
                            onClick={() => handlePurchase({
                              id: '1',
-                             title: 'Daily Walk Devotional',
-                             price: '$14.99',
-                             description: '365 Days of Inspiration',
-                             emoji: '📖',
+                             title: 'Afrobeat Pack Vol 1',
+                             price: '$29.99',
+                             description: '100+ Loops & One Shots',
+                             emoji: '🎹',
                              type: 'digital'
                            })}
                            className="text-xs bg-[#c5a059]/10 hover:bg-[#c5a059] text-[#c5a059] hover:text-black px-3 py-1.5 rounded transition-colors font-bold"
@@ -128,21 +132,23 @@ export default function ProductsPage() {
 
                 {/* Product Card 2 */}
                 <div className="group bg-[#111111] rounded-xl overflow-hidden border border-white/5 hover:border-[#c5a059]/30 transition-all">
-                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center text-6xl bg-[#1a1a1a] group-hover:scale-110 transition-transform duration-500">
+                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"></div>
+                      <div className="absolute inset-0 flex items-center justify-center text-6xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                          👕
                       </div>
                    </div>
-                   <div className="p-4">
-                      <h4 className="text-white font-bold mb-1">Faith Over Fear Tee</h4>
+                   <div className="p-4 relative z-20 bg-[#111111]">
+                      <h4 className="text-white font-bold mb-1">Sarz Tour Tee</h4>
                       <p className="text-slate-400 text-xs mb-3">Premium Cotton Blend</p>
                       <div className="flex items-center justify-between">
-                         <span className="text-white font-bold">$24.99</span>
+                         <span className="text-white font-bold">$34.99</span>
                          <button 
                            onClick={() => handlePurchase({
                              id: '2',
-                             title: 'Faith Over Fear Tee',
-                             price: '$24.99',
+                             title: 'Sarz Tour Tee',
+                             price: '$34.99',
                              description: 'Premium Cotton Blend',
                              emoji: '👕',
                              type: 'physical'
@@ -157,22 +163,24 @@ export default function ProductsPage() {
 
                 {/* Product Card 3 */}
                 <div className="group bg-[#111111] rounded-xl overflow-hidden border border-white/5 hover:border-[#c5a059]/30 transition-all">
-                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center text-6xl bg-[#1a1a1a] group-hover:scale-110 transition-transform duration-500">
+                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"></div>
+                      <div className="absolute inset-0 flex items-center justify-center text-6xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                          📓
                       </div>
                    </div>
-                   <div className="p-4">
-                      <h4 className="text-white font-bold mb-1">Sermon Notes Journal</h4>
-                      <p className="text-slate-400 text-xs mb-3">Leather-bound</p>
+                   <div className="p-4 relative z-20 bg-[#111111]">
+                      <h4 className="text-white font-bold mb-1">Producer Handbook</h4>
+                      <p className="text-slate-400 text-xs mb-3">Hardcover Edition</p>
                       <div className="flex items-center justify-between">
-                         <span className="text-white font-bold">$19.99</span>
+                         <span className="text-white font-bold">$24.99</span>
                          <button 
                            onClick={() => handlePurchase({
                              id: '3',
-                             title: 'Sermon Notes Journal',
-                             price: '$19.99',
-                             description: 'Leather-bound',
+                             title: 'Producer Handbook',
+                             price: '$24.99',
+                             description: 'Hardcover Edition',
                              emoji: '📓',
                              type: 'physical'
                            })}
@@ -186,21 +194,23 @@ export default function ProductsPage() {
 
                 {/* Product Card 4 */}
                 <div className="group bg-[#111111] rounded-xl overflow-hidden border border-white/5 hover:border-[#c5a059]/30 transition-all">
-                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center text-6xl bg-[#1a1a1a] group-hover:scale-110 transition-transform duration-500">
+                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"></div>
+                      <div className="absolute inset-0 flex items-center justify-center text-6xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                          💿
                       </div>
                    </div>
-                   <div className="p-4">
-                      <h4 className="text-white font-bold mb-1">Worship Album Vol. 1</h4>
+                   <div className="p-4 relative z-20 bg-[#111111]">
+                      <h4 className="text-white font-bold mb-1">Instrumentals Vol. 1</h4>
                       <p className="text-slate-400 text-xs mb-3">Digital Download</p>
                       <div className="flex items-center justify-between">
-                         <span className="text-white font-bold">$9.99</span>
+                         <span className="text-white font-bold">$19.99</span>
                          <button 
                            onClick={() => handlePurchase({
                              id: '4',
-                             title: 'Worship Album Vol. 1',
-                             price: '$9.99',
+                             title: 'Instrumentals Vol. 1',
+                             price: '$19.99',
                              description: 'Digital Download',
                              emoji: '💿',
                              type: 'digital'
@@ -218,9 +228,9 @@ export default function ProductsPage() {
           {/* Call to Action */}
           <div className="rounded-2xl bg-gradient-to-r from-[#c5a059]/20 to-[#998045]/20 border border-[#c5a059]/20 p-8 text-center relative overflow-hidden">
              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white mb-2">Become a Ministry Partner</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">Join the Inner Circle</h3>
                 <p className="text-slate-300 mb-6 max-w-xl mx-auto">
-                   Join our community of monthly supporters and get exclusive access to premium resources and early product releases.
+                   Become a member and get early access to new beats, exclusive studio sessions, and discounts on merch.
                 </p>
                 <button className="px-8 py-3 rounded-full bg-[#c5a059] text-black font-bold hover:bg-[#e5c07b] transition-colors">
                    Learn More

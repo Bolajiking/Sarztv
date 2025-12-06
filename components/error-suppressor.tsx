@@ -162,7 +162,17 @@ export function ErrorSuppressor() {
       if (!shouldSuppress) {
         // Wrap in try-catch to prevent the suppressor itself from causing crashes
         try {
-            originalError.apply(console, args);
+            // Filter out empty objects and null/undefined before logging
+            const filteredArgs = args.filter(arg => {
+                if (arg === null || arg === undefined) return false;
+                if (typeof arg === 'object' && Object.keys(arg).length === 0) return false;
+                return true;
+            });
+            
+            // Only log if there are actual arguments
+            if (filteredArgs.length > 0) {
+                originalError.apply(console, filteredArgs);
+            }
         } catch (e) {
             // If apply fails, try direct call as fallback
             try {

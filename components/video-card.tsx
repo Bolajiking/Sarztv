@@ -29,6 +29,9 @@ export function VideoCard({
     return null;
   }
 
+  // Determine if access is granted (simulated for demo)
+  const isAccessGranted = isFree;
+
   return (
     <Link href={href ?? `/videos/${id}`} className="group block">
       <div className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-[#111111] to-black border border-white/10 shadow-lg hover:shadow-[#c5a059]/20 transition-all duration-500 hover:scale-[1.03] hover:border-[#c5a059]/40 hover:z-10 ${compact ? 'flex flex-row h-24' : ''}`}>
@@ -78,17 +81,28 @@ export function VideoCard({
             </div>
           )}
           
-          {/* Play button overlay */}
+          {/* Play button overlay or Lock overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all duration-500 opacity-0 group-hover:opacity-100">
-            <div className="w-16 h-16 rounded-full bg-[#c5a059]/80 backdrop-blur-md flex items-center justify-center ring-1 ring-white/20 transform scale-75 group-hover:scale-100 transition-all duration-500 shadow-xl">
-              <svg className="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
+            <div className={`w-16 h-16 rounded-full ${isAccessGranted ? 'bg-[#c5a059]/80' : 'bg-black/80'} backdrop-blur-md flex items-center justify-center ring-1 ring-white/20 transform scale-75 group-hover:scale-100 transition-all duration-500 shadow-xl`}>
+              {isAccessGranted ? (
+                <svg className="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              ) : (
+                 <svg className="w-8 h-8 text-[#c5a059]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                 </svg>
+              )}
             </div>
           </div>
           
           {!isFree && (
-            <div className="absolute right-3 top-3 rounded-lg bg-[#c5a059] px-3 py-1.5 text-xs font-bold text-black shadow-lg z-20">
+            <div className="absolute right-3 top-3 rounded-lg bg-[#c5a059] px-3 py-1.5 text-xs font-bold text-black shadow-lg z-20 flex items-center gap-1">
+              {!isAccessGranted && (
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              )}
               ${priceUsd.toFixed(2)}
             </div>
           )}

@@ -59,6 +59,7 @@ export default function VideoPlayer({
   const [error, setError] = useState<string | null>(null);
   const mountTimeRef = useRef(Date.now());
   const router = useRouter();
+  const [useFallback, setUseFallback] = useState(false);
   
   // Fetch the playback URL from our API (which uses the Livepeer SDK)
   useEffect(() => {
@@ -98,15 +99,24 @@ export default function VideoPlayer({
           setSource([buildHlsSrc(data.playbackUrl)]);
           setError(null);
         } else {
-          console.warn('[Video Player] No valid playback sources in API response');
-          setSource(null);
-          setError('Video not ready for playback');
+          console.warn('[Video Player] No valid playback sources in API response - using direct CDN fallback');
+          // Use direct CDN URLs as last resort
+          const directFallback: Src[] = [
+            buildHlsSrc(`https://livepeercdn.studio/hls/${trimmedPlaybackId}/index.m3u8`),
+          ];
+          setSource(directFallback);
+          setUseFallback(true);
         }
       })
       .catch((err) => {
-        console.error('[Video Player] API fetch failed:', err.message);
-        setSource(null);
-        setError('Unable to load video');
+        console.error('[Video Player] API fetch failed, using direct CDN fallback:', err.message);
+        // Use direct CDN URLs when API fails (network restrictions)
+        const directFallback: Src[] = [
+          buildHlsSrc(`https://livepeercdn.studio/hls/${trimmedPlaybackId}/index.m3u8`),
+        ];
+        setSource(directFallback);
+        setUseFallback(true);
+        setError(null); // Don't show error if we have fallback
       })
       .finally(() => {
         setIsLoadingSource(false);

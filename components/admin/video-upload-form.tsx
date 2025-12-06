@@ -292,9 +292,9 @@ export function VideoUploadForm({ onSuccess }: VideoUploadFormProps) {
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             className="mt-1 block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-black shadow-sm focus:border-black focus:outline-none focus:ring-black dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:focus:border-white dark:focus:ring-white"
           >
-            <option value="worship">Worship Experiences</option>
-            <option value="sermon">Sermon Series</option>
-            <option value="conference">Conferences & Events</option>
+            <option value="worship">Studio Sessions</option>
+            <option value="sermon">Music Videos</option>
+            <option value="conference">Live Shows</option>
             <option value="other">Other</option>
           </select>
         </div>

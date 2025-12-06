@@ -1,11 +1,13 @@
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { VideoPlayer } from '@/components/video-player';
-import { VideoCard } from '@/components/video-card'; // Import VideoCard
+import { VideoCard } from '@/components/video-card';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getLivepeerVideoBySlug, getLivepeerVideos } from '@/lib/video/livepeer-data'; // Import getLivepeerVideos
+import { getLivepeerVideoBySlug, getLivepeerVideos } from '@/lib/video/livepeer-data';
 import { getPlaybackSrc } from '@/lib/video/livepeer-utils';
+import { ProductCheckoutModal } from '@/components/product-checkout-modal';
+import { VideoAccessManager } from '@/components/video-access-manager'; // New client component
 
 // Force dynamic rendering for video data
 export const dynamic = 'force-dynamic';
@@ -41,6 +43,10 @@ export default async function VideoPage({ params }: VideoPageProps) {
   // Filter out the current video and limit to 5 related videos
   const relatedVideos = allVideos.filter((v) => v.slug !== video.slug).slice(0, 6);
 
+  // Simulate access check for demo
+  // In a real app, this would check user's purchase history or subscription
+  const hasAccess = video.isFree;
+
   return (
     <div className="flex min-h-screen flex-col bg-[#050505] text-white font-sans">
       <Navigation />
@@ -61,26 +67,12 @@ export default async function VideoPage({ params }: VideoPageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* MAIN CONTENT (Left) - 8 Columns */}
                 <div className="lg:col-span-9 flex flex-col gap-6">
-                    {/* Video Player Container */}
-                    <div className="relative overflow-hidden rounded-2xl shadow-2xl shadow-black/50 ring-1 ring-white/10 bg-black aspect-video group">
-                        <div className="absolute inset-0 bg-[#c5a059]/5 pointer-events-none group-hover:bg-transparent transition-colors duration-500" />
-              {video.playbackId ? (
-                <VideoPlayer
-                  playbackId={video.playbackId}
-                  title={video.title}
-                  poster={video.thumbnailUrl || undefined}
-                  showControls={true}
-                  initialSrc={playbackSrc}
-                            autoPlay={false}
-                />
-              ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-[#111111]">
-                  <div className="text-center">
-                                <p className="text-slate-400">Video is processing...</p>
-                  </div>
-                </div>
-              )}
-            </div>
+                    {/* Video Player Container or Paywall */}
+                    <VideoAccessManager 
+                        video={video}
+                        playbackSrc={playbackSrc}
+                        hasAccess={hasAccess}
+                    />
 
                     {/* Video Info */}
                     <div className="space-y-6">
@@ -97,14 +89,14 @@ export default async function VideoPage({ params }: VideoPageProps) {
                                     {video.metadata?.category && (
                                         <span className="px-3 py-1 rounded-full bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/20 text-xs font-bold uppercase tracking-wider">
                                             {video.metadata.category}
-                  </span>
+                                        </span>
                                     )}
                                     {!video.isFree && (
                                         <span className="px-3 py-1 rounded-full bg-white/10 text-white border border-white/20 text-xs font-bold uppercase tracking-wider">
                                             Premium
-                  </span>
-                )}
-              </div>
+                                        </span>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Action Buttons */}
@@ -149,7 +141,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
                                         priceUsd={related.priceUsd}
                                         isFree={related.isFree}
                                         status={related.status}
-                                        compact={true} // You might want to add a 'compact' prop to VideoCard or just rely on the small container
+                                        compact={true}
                                     />
                                 </div>
                             ))

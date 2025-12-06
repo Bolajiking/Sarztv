@@ -4,9 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export function LiveChat() {
   const [messages, setMessages] = useState<{ id: string; user: string; text: string; color: string }[]>([
-    { id: '1', user: 'Grace', text: 'Good morning everyone! 🙏', color: 'text-[#e5c07b]' },
-    { id: '2', user: 'John', text: 'Ready for the word today.', color: 'text-blue-400' },
-    { id: '3', user: 'Sarah', text: 'Hallelujah!', color: 'text-[#c5a059]' },
+    { id: '1', user: 'Jay', text: 'This beat is 🔥🔥🔥', color: 'text-[#e5c07b]' },
+    { id: '2', user: 'Temi', text: 'Sarz never disappoints!', color: 'text-blue-400' },
+    { id: '3', user: 'Kunle', text: 'Drop the instrumental bro! 💯', color: 'text-[#c5a059]' },
   ]);
   const [newMessage, setNewMessage] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -29,12 +29,16 @@ export function LiveChat() {
   useEffect(() => {
     const interval = setInterval(() => {
       const mockMessages = [
-        { user: 'David', text: 'Amen! 🙌', color: 'text-green-400' },
-        { user: 'Esther', text: 'So powerful.', color: 'text-[#e5c07b]' },
-        { user: 'Michael', text: 'Greetings from London!', color: 'text-orange-400' },
-        { user: 'Rebecca', text: 'Thank you for this message.', color: 'text-cyan-400' },
-        { user: 'James', text: 'Can we get the scripture reference?', color: 'text-red-400' },
-        { user: 'Mary', text: '🙏 blessed', color: 'text-[#c5a059]' },
+        { user: 'Chioma', text: 'The production quality! 😍', color: 'text-green-400' },
+        { user: 'Femi', text: 'This is fire! 🔥', color: 'text-[#e5c07b]' },
+        { user: 'Adebayo', text: 'Watching from London! 🇬🇧', color: 'text-orange-400' },
+        { user: 'Ngozi', text: 'When is the album dropping?', color: 'text-cyan-400' },
+        { user: 'Emeka', text: 'Best producer in the game! 💪', color: 'text-red-400' },
+        { user: 'Zainab', text: '🎹 legendary', color: 'text-[#c5a059]' },
+        { user: 'David', text: 'Can we get a tutorial on this?', color: 'text-purple-400' },
+        { user: 'Amara', text: 'The bounce is crazy! 🔊', color: 'text-pink-400' },
+        { user: 'Kola', text: 'Play Mona Lisa! 🎵', color: 'text-yellow-400' },
+        { user: 'Blessing', text: 'Vibes on vibes! ⚡', color: 'text-indigo-400' },
       ];
       
       const randomMsg = mockMessages[Math.floor(Math.random() * mockMessages.length)];
@@ -69,7 +73,7 @@ export function LiveChat() {
           <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
           Live Chat
         </h3>
-        <span className="text-xs text-zinc-500 font-mono">1.2k online</span>
+        <span className="text-xs text-zinc-500 font-mono">3.4k watching</span>
       </div>
 
       <div 
@@ -90,7 +94,7 @@ export function LiveChat() {
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Say something..."
+            placeholder="Drop a comment..."
             className="w-full bg-zinc-800/50 border border-white/10 rounded-full py-2.5 pl-4 pr-10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#c5a059]/50 focus:ring-1 focus:ring-[#c5a059]/50 transition-all"
           />
           <button 

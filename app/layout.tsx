@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CCI TV - Ministry Streaming Platform",
-  description: "Leading people to a life of endless celebration in Christ. Join our digital sanctuary for live services, sermons, and spiritual growth.",
+  title: "SARZ TV - The Official Streaming Platform",
+  description: "Exclusive beats, behind-the-scenes, live sessions, and more from the legendary producer Sarz.",
 };
 
 export default function RootLayout({

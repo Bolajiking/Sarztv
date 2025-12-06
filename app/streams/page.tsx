@@ -38,10 +38,10 @@ export default async function StreamsPage() {
           <div className="mb-12 text-center">
             <h1 className="text-3xl md:text-5xl font-black text-white flex items-center justify-center gap-4 drop-shadow-lg">
               <span className="text-4xl md:text-6xl">📡</span>
-              Live Services
+              Live Sessions
             </h1>
             <p className="mt-4 text-xl text-slate-300 max-w-2xl mx-auto">
-              Join us for worship, teaching, and community in real-time.
+              Catch Sarz live in the studio or on stage.
             </p>
           </div>
 
@@ -64,10 +64,10 @@ export default async function StreamsPage() {
               </svg>
               </div>
               <h3 className="mt-6 text-2xl font-bold text-white">
-                No live services at the moment
+                No live sessions at the moment
               </h3>
               <p className="mt-3 text-lg text-slate-400">
-                Join us for our next scheduled service.
+                Join us for the next scheduled broadcast.
               </p>
             </div>
           ) : (
@@ -80,7 +80,7 @@ export default async function StreamsPage() {
                       <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
                     </span>
                     <span className="text-sm font-bold text-red-400 uppercase tracking-wider">
-                      Live Service Now
+                      Live Session Now
                     </span>
                   </div>
                   <h2 className="text-3xl font-black text-white">{activeStream.title}</h2>
@@ -92,7 +92,7 @@ export default async function StreamsPage() {
                   href={`/streams/${activeStream.slug}`}
                   className="px-8 py-3 rounded-full font-bold text-black bg-gradient-to-r from-[#c5a059] to-[#e5c07b] hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-[#c5a059]/20 uppercase tracking-wide border-2 border-white/10"
                 >
-                  Join Service →
+                  Join Session →
                 </Link>
               </div>
               
@@ -128,10 +128,10 @@ export default async function StreamsPage() {
               <div>
                 <h2 className="text-3xl font-black text-white flex items-center gap-3">
                   <span className="text-4xl">⏪</span>
-                  Past Services
+                  Past Sessions
                 </h2>
                 <p className="mt-2 text-slate-400">
-                  Watch replays of our previous gatherings
+                  Watch replays of previous streams.
                 </p>
               </div>
             </div>

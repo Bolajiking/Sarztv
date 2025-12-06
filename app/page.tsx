@@ -30,150 +30,150 @@ export default async function Home() {
   const recentVideos = videos;
 
   // Filter videos by category (category is a top-level property, not nested in metadata)
-  const worshipVideos = videos.filter(v => v.category === 'worship');
-  const sermonVideos = videos.filter(v => v.category === 'sermon');
-  const conferenceVideos = videos.filter(v => v.category === 'conference');
+  const studioVideos = videos.filter(v => v.category === 'worship'); // Mapped to Studio Sessions
+  const musicVideos = videos.filter(v => v.category === 'sermon'); // Mapped to Music Videos
+  const liveShowVideos = videos.filter(v => v.category === 'conference'); // Mapped to Live Shows
 
-  // Placeholder Data for "Worship Experiences" (Fallback if no real data)
-  const worshipPlaceholders = [
+  // Placeholder Data for "Studio Sessions" (Fallback if no real data)
+  const studioPlaceholders = [
     {
-      id: 'worship-1',
-      title: 'Endless Celebration Night',
-      description: 'A night of powerful worship and praise.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?q=80&w=1000&auto=format&fit=crop',
+      id: 'studio-1',
+      title: 'Making of "Trobul"',
+      description: 'Behind the scenes of the hit track production.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
     {
-      id: 'worship-2',
-      title: 'Easter at Celebration',
-      description: 'He is Risen! Join us for this special service.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1544427920-24e832256172?q=80&w=1000&auto=format&fit=crop',
+      id: 'studio-2',
+      title: 'Beat Breakdown: Mona Lisa',
+      description: 'Step by step production process.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
     {
-      id: 'worship-3',
-      title: 'Atmosphere of Miracles',
-      description: 'Live worship recording from our healing service.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1506701168088-8cb6a18729b5?q=80&w=1000&auto=format&fit=crop',
+      id: 'studio-3',
+      title: 'Late Night Vibes',
+      description: 'Uncut studio session with the team.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
     {
-      id: 'worship-4',
-      title: 'CCI Worship Live: The Encounter',
-      description: 'Exclusive extended worship session.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e3728?q=80&w=1000&auto=format&fit=crop',
+      id: 'studio-4',
+      title: 'Masterclass: Afrobeat Drums',
+      description: 'Learn the secrets of the Sarz drum bounce.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1519892300165-cb5542fb4747?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 4.99,
       isFree: false,
       status: 'ready'
     },
   ];
 
-  // Placeholder Data for "Sermon Series" (Fallback)
-  const sermonPlaceholders = [
+  // Placeholder Data for "Music Videos" (Fallback)
+  const videoPlaceholders = [
     {
-      id: 'series-1',
-      title: 'The Book of Romans',
-      description: 'Understanding grace and righteousness.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?q=80&w=1000&auto=format&fit=crop',
+      id: 'mv-1',
+      title: 'Sarz x WurlD - Mad',
+      description: 'Official Music Video.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
     {
-      id: 'series-2',
-      title: 'Kingdom Culture',
-      description: 'Living out the values of the Kingdom.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1000&auto=format&fit=crop',
+      id: 'mv-2',
+      title: 'Sarz x Lojay - Monalisa',
+      description: 'Official Music Video.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
     {
-      id: 'series-3',
-      title: 'Financial Dominion',
-      description: 'Mastering biblical economics and stewardship.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1000&auto=format&fit=crop',
+      id: 'mv-3',
+      title: 'Happiness',
+      description: 'Visualizer.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
     {
-      id: 'series-4',
-      title: 'The Holy Spirit Series',
-      description: 'Deep dive into the person and power of the Holy Spirit.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?q=80&w=1000&auto=format&fit=crop',
+      id: 'mv-4',
+      title: 'Goody Goody',
+      description: 'Official Lyric Video.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e3728?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
-      isFree: true, // Subscriber only content usually marked as free but gated, or can be price
+      isFree: true, 
       status: 'ready'
     },
     {
-      id: 'series-5',
-      title: 'Relationship Goals',
-      description: 'Building god-fearing relationships and marriages.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1516575972642-9084b276ee66?q=80&w=1000&auto=format&fit=crop',
+      id: 'mv-5',
+      title: 'Get Up',
+      description: 'Flashback Friday.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 9.99,
       isFree: false,
       status: 'ready'
     },
     {
-      id: 'series-6',
-      title: 'Prophetic Alignment',
-      description: 'Understanding the times and seasons.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?q=80&w=1000&auto=format&fit=crop',
+      id: 'mv-6',
+      title: 'Celetronic Riddim',
+      description: 'Dance video submission.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1547355253-ff0740f6e8c1?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
   ];
 
-  // Placeholder Data for "Conferences & Events" (Fallback)
-  const conferencePlaceholders = [
+  // Placeholder Data for "Live Shows" (Fallback)
+  const liveShowPlaceholders = [
     {
-      id: 'conf-1',
-      title: 'Leadership Summit 2024',
-      description: 'Equipping leaders for the next season.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1475721027767-305246394162?q=80&w=1000&auto=format&fit=crop',
+      id: 'show-1',
+      title: 'Sarz Live in Lagos',
+      description: 'The annual headline concert.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 19.99,
       isFree: false,
       status: 'ready'
     },
     {
-      id: 'conf-2',
-      title: 'Women\'s Conference',
-      description: 'Empowering women to walk in their calling.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000&auto=format&fit=crop',
+      id: 'show-2',
+      title: 'London Tour Diary',
+      description: 'Highlights from the UK tour.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 14.99,
       isFree: false,
       status: 'ready'
     },
     {
-      id: 'conf-3',
-      title: 'NextGen Youth Camp',
-      description: 'Raising the next generation of revivalists.',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1000&auto=format&fit=crop',
+      id: 'show-3',
+      title: 'NoJusEnemies Concert',
+      description: 'Live at the O2 Indigo.',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 0,
       isFree: true,
       status: 'ready'
     },
     {
-      id: 'conf-4',
-      title: 'Worship & Arts Masterclass',
-      description: 'Technical and spiritual training for creatives.',
+      id: 'show-4',
+      title: 'Soundcheck Sessions',
+      description: 'Raw audio from the soundcheck.',
       thumbnailUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 29.99,
       isFree: false,
       status: 'ready'
     },
     {
-      id: 'conf-5',
-      title: 'Marriage Retreat 2023',
-      description: 'Exclusive sessions from our annual retreat.',
+      id: 'show-5',
+      title: 'Sarz & Friends',
+      description: 'Exclusive jam session.',
       thumbnailUrl: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=1000&auto=format&fit=crop',
       priceUsd: 49.99,
       isFree: false,
@@ -183,16 +183,16 @@ export default async function Home() {
 
   // Combine real data with placeholders if real data is sparse (optional, or just show real data)
   // For now, let's prefer real data, but fallback to placeholders if empty to keep the UI populated
-  const displayWorship = worshipVideos.length > 0 ? worshipVideos : worshipPlaceholders;
-  const displaySermons = sermonVideos.length > 0 ? sermonVideos : sermonPlaceholders;
-  const displayConferences = conferenceVideos.length > 0 ? conferenceVideos : conferencePlaceholders;
+  const displayStudio = studioVideos.length > 0 ? studioVideos : studioPlaceholders;
+  const displayMusicVideos = musicVideos.length > 0 ? musicVideos : videoPlaceholders;
+  const displayLiveShows = liveShowVideos.length > 0 ? liveShowVideos : liveShowPlaceholders;
 
   // Mock Schedule Data
   const schedule = [
-    { time: '10:00 AM', title: 'Sunday Celebration', status: 'Live' },
-    { time: '6:00 PM', title: 'Evening Worship', status: 'Upcoming' },
-    { time: 'Wed 7:00 PM', title: 'Midweek Bible Study', status: 'Upcoming' },
-    { time: 'Fri 8:00 PM', title: 'Youth Encounter', status: 'Upcoming' },
+    { time: '10:00 AM', title: 'Beat Making Masterclass', status: 'Live' },
+    { time: '6:00 PM', title: 'Studio Session', status: 'Upcoming' },
+    { time: 'Wed 7:00 PM', title: 'Live Q&A with Sarz', status: 'Upcoming' },
+    { time: 'Fri 8:00 PM', title: 'Exclusive Mix Release', status: 'Upcoming' },
   ];
 
   return (
@@ -255,13 +255,13 @@ export default async function Home() {
                             
                             <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full max-w-3xl mx-auto flex flex-col items-center justify-center">
                                <span className="inline-block py-1.5 px-3 sm:px-4 rounded-full bg-[#c5a059]/20 backdrop-blur-sm text-xs sm:text-sm font-bold tracking-wider uppercase mb-4 sm:mb-6 text-[#c5a059] border border-[#c5a059]/30">
-                                  Featured Message
+                                  New Release
                                </span>
                                <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-white mb-3 sm:mb-4 drop-shadow-2xl tracking-tight px-2">
-                                  Endless Celebration
+                                  Sarz: The Producer
                                </h1>
                                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-200 mb-6 sm:mb-8 font-medium max-w-2xl mx-auto drop-shadow-md px-2">
-                                  Leading people to a life of endless celebration in Christ. Watch our latest service now.
+                                  Experience the creative process behind the hits. Watch the exclusive documentary now.
                                </p>
                                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full px-4">
                                   <button className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-[#c5a059] text-black font-bold rounded-md hover:bg-[#e5c07b] transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
@@ -335,9 +335,9 @@ export default async function Home() {
 
                          {/* Promo / Giving Card Small */}
                          <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-[#c5a059]/20 to-[#998045]/20 border border-[#c5a059]/20 text-center">
-                            <h4 className="text-[#c5a059] font-bold text-sm mb-2">Support the Ministry</h4>
+                            <h4 className="text-[#c5a059] font-bold text-sm mb-2">Exclusive Beats & Merch</h4>
                             <Link href="/products" className="block w-full py-2 rounded bg-[#c5a059] hover:bg-[#e5c07b] text-xs font-bold text-black transition-colors">
-                               Give Now
+                               Visit Store
                             </Link>
                          </div>
                       </div>
@@ -370,9 +370,9 @@ export default async function Home() {
              </VideoCarousel>
                 )}
                 
-           {/* 2. Worship Experiences */}
-           <VideoCarousel title="Worship Experiences">
-              {displayWorship.map((video: any) => (
+           {/* 2. Worship Experiences -> Studio Sessions */}
+           <VideoCarousel title="Studio Sessions">
+              {displayStudio.map((video: any) => (
                  <div key={video.slug || video.id} className="min-w-[280px] sm:min-w-[320px] snap-start">
                     <VideoCard
                        id={video.slug || video.id}
@@ -388,9 +388,9 @@ export default async function Home() {
               ))}
            </VideoCarousel>
 
-           {/* 3. Sermon Series */}
-           <VideoCarousel title="Sermon Series">
-              {displaySermons.map((video: any) => (
+           {/* 3. Sermon Series -> Music Videos */}
+           <VideoCarousel title="Music Videos">
+              {displayMusicVideos.map((video: any) => (
                  <div key={video.slug || video.id} className="min-w-[280px] sm:min-w-[320px] snap-start">
                     <VideoCard
                        id={video.slug || video.id}
@@ -406,9 +406,9 @@ export default async function Home() {
               ))}
            </VideoCarousel>
 
-            {/* 4. Conferences & Events */}
-           <VideoCarousel title="Conferences & Events">
-              {displayConferences.map((video: any) => (
+            {/* 4. Conferences & Events -> Live Shows */}
+           <VideoCarousel title="Live Shows">
+              {displayLiveShows.map((video: any) => (
                  <div key={video.slug || video.id} className="min-w-[280px] sm:min-w-[320px] snap-start">
                     <VideoCard
                        id={video.slug || video.id}

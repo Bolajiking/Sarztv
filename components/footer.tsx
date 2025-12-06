@@ -13,11 +13,11 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <h3 className="text-2xl font-black flex items-center gap-2">
-              <span className="text-3xl">✝️</span>
-              <span className="gradient-text">CCI TV</span>
+              <span className="text-3xl">🎹</span>
+              <span className="gradient-text">SARZ TV</span>
             </h3>
             <p className="mt-4 text-base text-slate-400 leading-relaxed max-w-md">
-              Leading people to a life of endless celebration in Christ. Watch live services, explore our sermon library, and connect with the ministry from anywhere in the world.
+              The official streaming platform for Sarz. Exclusive beats, behind-the-scenes, live sessions, and more from the legendary producer.
             </p>
             <div className="mt-6 flex gap-4">
               <a href="#" className="w-10 h-10 rounded-full bg-[#111111] flex items-center justify-center hover:bg-[#c5a059] hover:scale-110 transform transition-all duration-300 border border-white/10 group">
@@ -33,24 +33,24 @@ export function Footer() {
           </div>
           
           <div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Ministry</h4>
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Platform</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/videos" className="text-slate-400 hover:text-[#c5a059] transition-colors duration-300 flex items-center gap-2 group">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Video Library
+                  Videos
                 </Link>
               </li>
               <li>
                 <Link href="/streams" className="text-slate-400 hover:text-[#c5a059] transition-colors duration-300 flex items-center gap-2 group">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Live Services
+                  Live Sessions
                 </Link>
               </li>
               <li>
                 <Link href="/products" className="text-slate-400 hover:text-[#c5a059] transition-colors duration-300 flex items-center gap-2 group">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Ministry Hub
+                  Store
                 </Link>
               </li>
             </ul>
@@ -78,7 +78,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-slate-500">
-              © {new Date().getFullYear()} CCI TV. All rights reserved.
+              © {new Date().getFullYear()} SARZ TV. All rights reserved.
             </p>
             <div className="flex gap-6 text-xs text-slate-500">
               <a href="#" className="hover:text-[#c5a059] transition-colors">Privacy Policy</a>

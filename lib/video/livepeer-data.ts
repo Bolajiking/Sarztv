@@ -239,7 +239,7 @@ export const getLivepeerVideos = unstable_cache(
     // hiding raw stream recordings that haven't been processed/uploaded via our UI
     const managedAssets = limited.filter(asset => metadataMap.has(asset.id));
 
-    return managedAssets.map((asset) => {
+    const mappedAssets = managedAssets.map((asset) => {
       const metadata = metadataMap.get(asset.id);
       const playbackId = extractPlaybackId(asset);
       const createdAt =
@@ -254,19 +254,119 @@ export const getLivepeerVideos = unstable_cache(
         category: metadata?.category ?? 'other',
         thumbnailUrl: metadata?.thumbnail_url ?? getAssetThumbnail(asset),
         playbackId,
-        status: 'ready',
+        status: 'ready' as const,
         isFree: metadata?.is_free ?? true,
         priceUsd: metadata?.price_usd ?? 0,
         createdAt,
         metadata,
       };
     });
+
+    // Add DEMO premium videos if we have fewer than 4 real videos
+    if (mappedAssets.length < 4) {
+        const demoVideos: LivepeerVideoRecord[] = [
+            {
+                slug: 'demo-premium-1',
+                livepeerAssetId: 'demo-asset-1',
+                supabaseId: 'demo-1',
+                title: 'Studio Session: The Making of "Monalisa"',
+                description: 'Exclusive behind the scenes look at the production of the hit song Monalisa. Sarz breaks down the beat layer by layer.',
+                category: 'Studio Sessions',
+                thumbnailUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop',
+                playbackId: 'demo-playback-1',
+                status: 'ready',
+                isFree: false,
+                priceUsd: 19.99,
+                createdAt: new Date().toISOString(),
+            },
+             {
+                slug: 'demo-premium-2',
+                livepeerAssetId: 'demo-asset-2',
+                supabaseId: 'demo-2',
+                title: 'Masterclass: Afrobeats Drum Programming',
+                description: 'Learn the secrets to creating hard-hitting Afrobeat drums. A 2-hour deep dive into rhythm and groove.',
+                category: 'Masterclass',
+                thumbnailUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=1000&auto=format&fit=crop',
+                playbackId: 'demo-playback-2',
+                status: 'ready',
+                isFree: false,
+                priceUsd: 49.99,
+                createdAt: new Date(Date.now() - 86400000).toISOString(),
+            },
+             {
+                slug: 'demo-premium-3',
+                livepeerAssetId: 'demo-asset-3',
+                supabaseId: 'demo-3',
+                title: 'Sarz Live at O2 Arena: Full Concert',
+                description: 'Experience the energy of the sold-out O2 Arena show. Full concert footage in 4K.',
+                category: 'Live Shows',
+                thumbnailUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000&auto=format&fit=crop',
+                playbackId: 'demo-playback-3',
+                status: 'ready',
+                isFree: false,
+                priceUsd: 14.99,
+                createdAt: new Date(Date.now() - 172800000).toISOString(),
+            }
+        ];
+        return [...mappedAssets, ...demoVideos];
+    }
+
+    return mappedAssets;
   },
   ['livepeer-videos'],
   { revalidate: 60 }
 );
 
 export async function getLivepeerVideoBySlug(slug: string): Promise<LivepeerVideoRecord | null> {
+    // Handle demo slugs
+    if (slug.startsWith('demo-premium-')) {
+        const demoVideos: Record<string, LivepeerVideoRecord> = {
+            'demo-premium-1': {
+                slug: 'demo-premium-1',
+                livepeerAssetId: 'demo-asset-1',
+                supabaseId: 'demo-1',
+                title: 'Studio Session: The Making of "Monalisa"',
+                description: 'Exclusive behind the scenes look at the production of the hit song Monalisa. Sarz breaks down the beat layer by layer.',
+                category: 'Studio Sessions',
+                thumbnailUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1000&auto=format&fit=crop',
+                playbackId: 'demo-playback-1',
+                status: 'ready',
+                isFree: false,
+                priceUsd: 19.99,
+                createdAt: new Date().toISOString(),
+            },
+            'demo-premium-2': {
+                slug: 'demo-premium-2',
+                livepeerAssetId: 'demo-asset-2',
+                supabaseId: 'demo-2',
+                title: 'Masterclass: Afrobeats Drum Programming',
+                description: 'Learn the secrets to creating hard-hitting Afrobeat drums. A 2-hour deep dive into rhythm and groove.',
+                category: 'Masterclass',
+                thumbnailUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=1000&auto=format&fit=crop',
+                playbackId: 'demo-playback-2',
+                status: 'ready',
+                isFree: false,
+                priceUsd: 49.99,
+                createdAt: new Date(Date.now() - 86400000).toISOString(),
+            },
+            'demo-premium-3': {
+                slug: 'demo-premium-3',
+                livepeerAssetId: 'demo-asset-3',
+                supabaseId: 'demo-3',
+                title: 'Sarz Live at O2 Arena: Full Concert',
+                description: 'Experience the energy of the sold-out O2 Arena show. Full concert footage in 4K.',
+                category: 'Live Shows',
+                thumbnailUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000&auto=format&fit=crop',
+                playbackId: 'demo-playback-3',
+                status: 'ready',
+                isFree: false,
+                priceUsd: 14.99,
+                createdAt: new Date(Date.now() - 172800000).toISOString(),
+            }
+        };
+        return demoVideos[slug] || null;
+    }
+
   const supabase = getSupabaseAdmin();
 
   let metadata: SupabaseVideoRow | null = null;
@@ -408,7 +508,7 @@ export const getLivepeerStreams = unstable_cache(
     return resolvedStreams;
   },
   ['livepeer-streams-combined'],
-  { revalidate: 1 }
+  { revalidate: 5, tags: ['livestreams'] } // Revalidate every 5 seconds for near real-time updates
 );
 
 export const getRecordedSessions = unstable_cache(

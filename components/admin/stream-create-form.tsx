@@ -160,7 +160,7 @@ export function StreamCreateForm({ onSuccess }: StreamCreateFormProps) {
                 </label>
               </div>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                When enabled, CCITV will capture the broadcast and create a replay automatically.
+                When enabled, SARZ TV will capture the broadcast and create a replay automatically.
               </p>
             </div>
           </div>

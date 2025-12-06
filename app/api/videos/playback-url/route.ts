@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPlaybackUrl, getPlaybackInfoFromAsset, getPlaybackSrc } from '@/lib/video/livepeer-utils';
+import type { Src } from '@livepeer/react';
 
 /**
  * GET /api/videos/playback-url?playbackId={playbackId}
@@ -12,6 +13,14 @@ import { getPlaybackUrl, getPlaybackInfoFromAsset, getPlaybackSrc } from '@/lib/
  * If an asset ID is provided, it will fetch the asset first to get the playback ID.
  */
 export async function GET(request: NextRequest) {
+  // Set CORS headers for better network compatibility
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Cache-Control': 'public, max-age=60', // Cache for 60 seconds
+  };
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const playbackIdOrAssetId = searchParams.get('playbackId');
@@ -21,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (!playbackIdOrAssetId) {
       return NextResponse.json(
         { error: 'playbackId is required' },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
     
@@ -72,22 +81,23 @@ export async function GET(request: NextRequest) {
       );
       playbackUrl = hlsSource?.src || null;
       
-      return NextResponse.json({ src, playbackUrl });
+      return NextResponse.json({ src, playbackUrl }, { headers });
     }
     
-    // No valid sources - video not ready or invalid
-    console.error('[Playback URL API] No valid playback sources for:', actualPlaybackId);
-      return NextResponse.json(
-        { 
-        error: 'Video playback not available',
-          playbackId: actualPlaybackId,
-          originalId: playbackIdOrAssetId,
-          note: isAssetId 
-          ? 'The video asset exists but playback sources are not available. It may still be processing.'
-          : 'No playback sources found for this playback ID. The video may still be processing.',
-        },
-        { status: 404 }
-      );
+    // No valid sources - return direct CDN fallbacks as last resort
+    console.warn('[Playback URL API] No valid playback sources, returning CDN fallbacks for:', actualPlaybackId);
+    const fallbackSources: Src[] = [
+      { src: `https://livepeercdn.studio/hls/${actualPlaybackId}/index.m3u8`, type: 'application/vnd.apple.mpegurl' },
+    ];
+    
+    return NextResponse.json(
+      { 
+        src: fallbackSources,
+        playbackUrl: fallbackSources[0].src,
+        note: 'Using direct CDN fallback URLs',
+      },
+      { status: 200, headers }
+    );
   } catch (error) {
     console.error('[Playback URL API] Error:', error);
     return NextResponse.json(
@@ -95,8 +105,20 @@ export async function GET(request: NextRequest) {
         error: error instanceof Error ? error.message : 'Unknown error',
         details: error instanceof Error ? error.stack : String(error),
       },
-      { status: 500 }
+      { status: 500, headers }
     );
   }
+}
+
+// Handle OPTIONS for CORS preflight
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }
 

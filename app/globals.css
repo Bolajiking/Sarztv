@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* CCI TV - Ministry Color Palette */
+  /* SARZ TV - Custom Color Palette */
   /* Aligning with joincci.org aesthetic: Deep Black/Dark Gray & Gold */
   --background: #050505; /* Almost Black */
   --foreground: #ffffff; /* Pure White */
