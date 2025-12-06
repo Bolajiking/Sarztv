@@ -26,8 +26,8 @@ import { useRouter } from 'next/navigation';
 const buildHlsSrc = (url: string): Src =>
   ({
     src: url,
-    type: 'application/vnd.apple.mpegurl',
-  } as unknown as Src);
+    type: 'hls',
+  } as Src);
 
 interface VideoPlayerProps {
   playbackId: string;

@@ -7,8 +7,8 @@ import type { Src } from '@livepeer/react';
 const buildHlsSrc = (url: string): Src =>
   ({
     src: url,
-    type: 'application/vnd.apple.mpegurl',
-  } as unknown as Src);
+    type: 'hls',
+  } as Src);
 
 /**
  * Livepeer API utilities

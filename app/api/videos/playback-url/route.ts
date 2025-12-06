@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
     // No valid sources - return direct CDN fallbacks as last resort
     console.warn('[Playback URL API] No valid playback sources, returning CDN fallbacks for:', actualPlaybackId);
     const fallbackSources: Src[] = [
-      { src: `https://livepeercdn.studio/hls/${actualPlaybackId}/index.m3u8`, type: 'application/vnd.apple.mpegurl' },
+      { src: `https://livepeercdn.studio/hls/${actualPlaybackId}/index.m3u8`, type: 'hls' },
     ];
     
     return NextResponse.json(
