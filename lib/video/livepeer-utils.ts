@@ -4,11 +4,11 @@ import { Livepeer } from 'livepeer';
 import { getSrc } from '@livepeer/react/external';
 import type { Src } from '@livepeer/react';
 
-const buildHlsSrc = (url: string): Src =>
-  ({
-    src: url,
-    type: 'hls',
-  } as Src);
+const buildHlsSrc = (url: string): Src => ({
+  src: url,
+  type: 'hls',
+  mime: 'application/vnd.apple.mpegurl',
+} as Src);
 
 /**
  * Livepeer API utilities

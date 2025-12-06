@@ -23,11 +23,11 @@ import type { Src } from '@livepeer/react';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-const buildHlsSrc = (url: string): Src =>
-  ({
-    src: url,
-    type: 'hls',
-  } as Src);
+const buildHlsSrc = (url: string): Src => ({
+  src: url,
+  type: 'hls',
+  mime: 'application/vnd.apple.mpegurl',
+} as Src);
 
 interface VideoPlayerProps {
   playbackId: string;
